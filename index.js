@@ -6,7 +6,11 @@ const {customAlphabet} = require("nanoid");
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
 
 const app = express();
-app.use(require("cors")());
+app.use([
+    require("cors")(),
+    express.static(__dirname + "/upload")
+]);
+
 const port = process.env.PORT || 8080;
 
 const storage = multer.diskStorage({
