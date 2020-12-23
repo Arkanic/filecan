@@ -2,8 +2,7 @@ const path = require("path");
 const express = require("express");
 const multer = require("multer");
 
-const {customAlphabet} = require("nanoid");
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
+
 
 const app = express();
 app.use([
@@ -13,17 +12,7 @@ app.use([
 
 const port = process.env.PORT || 8080;
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "upload");
-    },
-    filename: (req, file, cb) => {
-        cb(null, nanoid() + path.extname(file.originalname));
-    }
-});
-const fileFilter = (req, file, cb) => {
-    cb(null, true);
-}
+const {storage, fileFilter} = require("./src/server/multerconf");
 const upload = multer({storage, fileFilter});
 
 app.post("/api/upload", upload.any(), (req, res, next) => {
