@@ -1,0 +1,26 @@
+{
+  "name": "filecan",
+  "version": "1.0.0",
+  "description": "node.js file hoster",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arkanic/filecan.git"
+  },
+  "author": "Arkanic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arkanic/filecan/issues"
+  },
+  "homepage": "https://github.com/Arkanic/filecan#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "nanoid": "^3.1.20"
+  }
+}
