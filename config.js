@@ -13,7 +13,7 @@ function genFilename(file) {
 const requirePassword = true;
 
 // Password, if password is enabled (will be changed into bcrypt one-way very soon)
-const password = "test";
+const password = true;
 
 // Specify port, if undefined defaults to 8080.
 const port = undefined || 8080;

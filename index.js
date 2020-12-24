@@ -16,11 +16,15 @@ const auth = require("./src/middleware/auth");
 
 app.post("/api/upload", auth, upload.any(), (req, res, next) => {
     try {
-        return res.status(201).json({
+        res.status(201).json({
             success: true,
             message: "File uploaded successfully",
             files: req.files
         });
+        for(let i in req.files) {
+            console.log(`Successfully uploaded "${req.files[i].originalname}" as "${req.files[i].filename}"`);
+        }
+        return;
     } catch (error) {
         return res.status(500).json({
             success: false,
