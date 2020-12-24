@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const multer = require("multer");
 
-
+const config = require("./config");
 
 const app = express();
 app.use([
@@ -10,12 +10,11 @@ app.use([
     express.static(__dirname + "/upload")
 ]);
 
-const port = process.env.PORT || 8080;
-
-const {storage, fileFilter} = require("./src/server/multerconf");
+const {storage, fileFilter} = require("./src/middleware/multerconf");
 const upload = multer({storage, fileFilter});
+const auth = require("./src/middleware/auth");
 
-app.post("/api/upload", upload.any(), (req, res, next) => {
+app.post("/api/upload", auth, upload.any(), (req, res, next) => {
     try {
         return res.status(201).json({
             success: true,
@@ -35,4 +34,4 @@ app.get("/", (req, res) => {
     res.status(200).send("Hi");
 });
 
-app.listen(port, () => console.log("Listener online"));
+app.listen(config.port, () => console.log("Listener online"));
