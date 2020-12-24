@@ -1,7 +1,7 @@
 const path = require("path");
 const multer = require("multer");
 const {customAlphabet} = require("nanoid");
-const nanoid = customAlphabet("0123456789abcdef", 6);
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
