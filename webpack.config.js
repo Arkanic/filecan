@@ -53,11 +53,10 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: "x.[contenthash].css"
         }),
-        new HtmlExtractPlugin({
+        new HtmlWebpackPlugin({
             filename: "index.html",
             template: "src/client/html/index.html"
         }),
-        new CleanWebpackPlugin(),
-        new webpack.HashedModuleIdsPlugin()
+        new CleanWebpackPlugin()
     ]
 };
