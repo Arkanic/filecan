@@ -12,7 +12,8 @@ function genFilename(file) {
 // Require password to upload files
 const requirePassword = true;
 
-// Password, if password is enabled (will be changed into bcrypt one-way very soon)
+// One way encrypted password
+// use the command "node tools/genpassword.js <your password (no spaces>" to generate the one-way hash.
 const password = "$2b$10$RuA0yFbUqtOl2i3iXC3D/uEPDVL5BHZzBAA03vW9bNh4s7yo7g1he";
 
 // Specify port, if undefined defaults to 8080.

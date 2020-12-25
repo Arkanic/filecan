@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const config = require("../../config");
 
 function auth(req, res, next) {
+    if(!config.requirePassword) next();
     let password = req.headers.password;
     if(!password) {
         res.status(400).json({
