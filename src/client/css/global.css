@@ -5,3 +5,10 @@ h1 {
     font-size: 64px;
     font-weight: 50;
 }
+.paragraph {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2%;
+    padding-right: 100%;
+    background-color: rgba(230, 230, 230, 1);
+}
