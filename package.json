@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --progress",
-    "start": "node index.js"
+    "start": "node index.js",
+    "quick": "npm run build && npm run start"
   },
   "repository": {
     "type": "git",
