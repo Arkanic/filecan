@@ -14,7 +14,9 @@ const {storage, fileFilter} = require("./src/middleware/multerconf");
 const upload = multer({storage, fileFilter});
 const auth = require("./src/middleware/auth");
 
-app.post("/api/upload", auth, upload.any(), (req, res, next) => {
+app.post("/api/upload", (req, res, next) => {
+    auth(req, res, next);
+}, upload.any(), (req, res, next) => {
     try {
         res.status(201).json({
             success: true,

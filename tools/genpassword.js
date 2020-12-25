@@ -1,10 +1,11 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-function genHash(pword, saltRounds, then) {
+function genHash(password, saltRounds, then) {
+    if(!password) throw new Error("need to specify password"); 
     bcrypt.genSalt(saltRounds, (err, salt) => {
         if(err) throw err;
-        bcrypt.hash(pword, salt, (err, hash) => {
+        bcrypt.hash(password, salt, (err, hash) => {
             if(err) throw err;
             then(hash);
         });
