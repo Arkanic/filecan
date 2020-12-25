@@ -7,7 +7,9 @@ const config = require("./config");
 const app = express();
 app.use([
     require("cors")(),
-    express.static(__dirname + "/upload")
+    express.static(__dirname + "/upload"),
+    express.static(__dirname + "/dist"),
+    express.static(__dirname + "/public")
 ]);
 
 const {storage, fileFilter} = require("./src/middleware/multerconf");
