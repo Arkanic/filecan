@@ -1,5 +1,5 @@
 import {getConfig, returnConfig} from "./scripts/networking";
-import {stopLoading} from "./scripts/menu";
+import {stopLoading, setupMenu} from "./scripts/menu";
 
 import "./css/global.css"
 
@@ -10,5 +10,6 @@ Promise.all([
 ]).then(() => {
     config = returnConfig();
     console.log(config);
+    setupMenu();
     stopLoading();
 })
