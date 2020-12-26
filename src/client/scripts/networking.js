@@ -8,9 +8,11 @@ export const getConfig = new Promise(resolve => {
             config = xhr.responseText;
             resolve();
         } else {
-            
+
         }
     }
+    xhr.open("GET", `${window.location.protocol}//${window.location.hostname}/api/config`, true);
+    xhr.send();
 });
 
 export const returnConfig = () => {

@@ -1,4 +1,5 @@
-import {getConfig, returnConfig} from "./scripts/networking"
+import {getConfig, returnConfig} from "./scripts/networking";
+import {stopLoading} from "./scripts/hud";
 
 import "./css/global.css"
 
@@ -8,4 +9,5 @@ Promise.all([
     getConfig()
 ]).then(() => {
     config = returnConfig();
+    stopLoading();
 })
