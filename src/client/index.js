@@ -1,3 +1,11 @@
+import {getConfig, returnConfig} from "./scripts/networking"
+
 import "./css/global.css"
 
-console.log("test");
+let config;
+
+Promise.all([
+    getConfig()
+]).then(() => {
+    config = returnConfig();
+})
