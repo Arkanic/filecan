@@ -6,8 +6,9 @@ import "./css/global.css"
 let config;
 
 Promise.all([
-    getConfig()
+    getConfig
 ]).then(() => {
     config = returnConfig();
+    console.log(config);
     stopLoading();
 })
