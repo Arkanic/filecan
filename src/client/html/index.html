@@ -5,9 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <h1>Filecan</h1>
-        <div class="paragraph">
-            <p>hi</p>
+        <div id="loading">
+            <img class="center" src="./img/loading.gif" style="display:none"></img>
+        </div>
+        <div id="content" style="display:block">
+            <h1>Filecan</h1>
+            <div class="paragraph">
+                <form>
+                    <input type="file" id="files" name="files" multiple>
+                    <input type="password" id="password" name="password">
+                    <input type="submit" id="submit">
+                </form>
+            </div>
         </div>
     </body>
 </html>

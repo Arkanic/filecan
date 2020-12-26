@@ -12,3 +12,11 @@ h1 {
     padding-right: 100%;
     background-color: rgba(230, 230, 230, 1);
 }
+img.center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}

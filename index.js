@@ -38,8 +38,10 @@ app.post("/api/upload", (req, res, next) => {
     }
 });
 
-app.get("/", (req, res) => {
-    res.status(200).send("Hi");
+app.get("/api/config", (req, res) => {
+    return res.status(200).json({
+        password: config.requirePassword
+    });
 });
 
 app.listen(config.port, () => console.log("Listener online"));
