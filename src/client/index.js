@@ -1,5 +1,5 @@
 import {getConfig, returnConfig} from "./scripts/networking";
-import {stopLoading} from "./scripts/hud";
+import {stopLoading} from "./scripts/menu";
 
 import "./css/global.css"
 
