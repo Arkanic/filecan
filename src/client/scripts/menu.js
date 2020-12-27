@@ -33,7 +33,7 @@ export const startFormListener = () => {
         let progress = evt.loaded/evt.total*100;
         progressbar.value=progress;
         
-        progressinfo.innerHTML = `%${progress} - ${evt.loaded}/${evt.total}`;
+        progressinfo.innerHTML = `%${progress.toFixed(2)} - ${evt.loaded}/${evt.total}`;
     }
 
     function load(evt) {
