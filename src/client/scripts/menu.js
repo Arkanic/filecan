@@ -16,8 +16,20 @@ export const startFormListener = () => {
     document.getElementById("submitbutton").onclick = () => {
         let formData = new FormData(form);
         let action = form.getAttribute("action");
-        sendData(formData, action);
+        sendData(formData, action, loadStart, progress, load, readyStateChange);
 
         return false;
+    }
+
+    function loadStart(e) {
+    }
+
+    function progress(e) {
+    }
+
+    function load(e) {
+    }
+
+    function readyStateChange(e) {
     }
 }
