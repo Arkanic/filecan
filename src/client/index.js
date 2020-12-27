@@ -10,4 +10,4 @@ Promise.all([
     setupMenu();
     stopLoading();
     startFormListener();
-})
+});
