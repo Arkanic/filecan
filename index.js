@@ -40,7 +40,7 @@ app.post("/api/upload", (req, res, next) => {
 
 app.get("/api/config", (req, res) => {
     return res.status(200).json({
-        password: config.requirePassword
+        requirePassword: config.requirePassword
     });
 });
 

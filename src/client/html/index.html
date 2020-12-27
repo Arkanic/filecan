@@ -5,16 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div id="loading" class="hidden">
+        <div id="loading">
             <img class="center" src="./img/loading.gif"></img>
         </div>
-        <div id="content" style="display:block">
+        <div id="content" class="hidden">
             <h1>Filecan</h1>
             <div class="paragraph">
                 <form>
                     <input type="file" id="files" name="files" multiple>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password">
+                    <div id="passwordbox">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password">
+                    </div>
                     <input type="button" id="submit" value="Submit">
                 </form>
             </div>

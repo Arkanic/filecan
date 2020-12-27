@@ -1,8 +1,12 @@
+import {config} from "./networking";
+
 export const stopLoading = () => {
     document.getElementById("loading").classList.add("hidden");
-    document.getElementById("content").classList.remove("content");
+    document.getElementById("content").classList.remove("hidden");
 }
 
 export const setupMenu = () => {
-    // hide or show the password box based on whether or not the server needs a password to upload
+    if(!config.requirePassword) {
+        document.getElementById("passwordbox").classList.add("hidden");
+    }
 }
