@@ -11,13 +11,16 @@
         <div id="content" class="hidden">
             <h1>Filecan</h1>
             <div class="paragraph">
-                <form>
+                <form action="/api/upload" enctype="multipart/form-data" id="form">
                     <input type="file" id="files" name="files" multiple>
                     <div id="passwordbox">
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password">
                     </div>
-                    <input type="button" id="submit" value="Submit">
+                    <div id="errorbox" class="hidden">
+                        <p id="error"></p>
+                    </div>
+                    <input type="button" value="Submit" id="submitbutton">
                 </form>
             </div>
         </div>
