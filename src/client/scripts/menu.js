@@ -21,15 +21,25 @@ export const startFormListener = () => {
         return false;
     }
 
-    function loadStart(e) {
+    let progressbox = document.getElementById("progressbox");
+    let progressbar = document.getElementById("progressbar");
+    let progressinfo = document.getElementById("progressinfo");
+
+    function loadStart(evt) {
+        progressbox.classList.remove("hidden");
     }
 
-    function progress(e) {
+    function progress(evt) {
+        let progress = evt.loaded/evt.total*100;
+        progressbar.value=progress;
+        
+        progressinfo.innerHTML = `%${progress} - ${evt.loaded}/${evt.total}`;
     }
 
-    function load(e) {
+    function load(evt) {
+        progressbox.classList.add("hidden");
     }
 
-    function readyStateChange(e) {
+    function readyStateChange(evt) {
     }
 }
