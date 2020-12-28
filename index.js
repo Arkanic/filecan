@@ -20,6 +20,7 @@ app.post("/api/upload", (req, res, next) => {
     auth(req, res, next);
 }, upload.any(), (req, res, next) => {
     try {
+        console.log("shouldve worked");
         res.status(201).json({
             success: true,
             message: "File uploaded successfully",
