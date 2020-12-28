@@ -13,10 +13,11 @@ export const setupMenu = () => {
 
 export const startFormListener = () => {
     let form = document.getElementById("form");
+    let xhr;
     document.getElementById("submitbutton").onclick = () => {
         let formData = new FormData(form);
         let action = form.getAttribute("action");
-        sendData(formData, action, loadStart, progress, load, readyStateChange);
+        xhr = sendData(formData, action, loadStart, progress, load, readyStateChange);
 
         return false;
     }
@@ -28,15 +29,32 @@ export const startFormListener = () => {
     let loading = document.getElementById("loading");
     let content = document.getElementById("content");
 
+    let results = document.getElementById("results");
+
+    let dpsc;
+    let last = 0;
+    let now = 0;
+    let dif;
+
     function loadStart(evt) {
         progressbox.classList.remove("hidden");
+        dpsc = setInterval(() => {
+            dif = now - last;
+            last = now;
+        }, 1000);
     }
 
     function progress(evt) {
+        now = evt.loaded;
         let progress = evt.loaded/evt.total*100;
         progressbar.value=progress;
         
-        progressinfo.innerHTML = `%${progress.toFixed(2)} - ${(evt.loaded/1024/1024).toFixed(2)}mb/${(evt.total/1024/1024).toFixed(2)}mb`;
+        progressinfo.innerHTML = `
+        %${progress.toFixed(2)}
+        ${(evt.loaded/1024/1024).toFixed(2)}mb/${(evt.total/1024/1024).toFixed(2)}mb
+        ${(dif/1024/1024).toFixed(2)}mb/s
+        ETA ${((evt.total-evt.loaded)/dif).toFixed(2)}s
+        `;
     }
 
     function load(evt) {
@@ -45,7 +63,9 @@ export const startFormListener = () => {
         loading.classList.remove("hidden");
     }
 
-    function readyStateChange(evt) {
+    function readyStateChange(readyState, responseText) {
         loading.classList.add("hidden");
+        console.log(readyState);
+        if(readyState == 4) results.classList.remove("hidden");
     }
 }

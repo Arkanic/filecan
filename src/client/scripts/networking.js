@@ -21,9 +21,12 @@ export const sendData = (formData, action, loadStart, progress, load, readyState
     xhr.upload.addEventListener("loadstart", loadStart);
     xhr.upload.addEventListener("progress", progress);
     xhr.upload.addEventListener("load", load);
-    xhr.addEventListener("readystatechange", readyStateChange);
+    xhr.addEventListener("readystatechange", (evt) => {
+        readyStateChange({readyState: xhr.readyState, responseText: xhr.responseText});
+    });
 
     xhr.open("POST", action, true);
     xhr.setRequestHeader("password", document.getElementById("password").value);
     xhr.send(formData);
+    return xhr;
 }
