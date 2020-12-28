@@ -65,7 +65,9 @@ export const startFormListener = () => {
 
     function readyStateChange(readyState, responseText) {
         loading.classList.add("hidden");
-        results.appendChild(document.createElement("p").appendChild(document.createTextnode(responseText)));
+        let text = document.createElement("p");
+        text.innerHTML = responseText;
+        results.appendChild(text);
         results.classList.remove("hidden");
     }
 }
