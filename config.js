@@ -13,7 +13,7 @@ function genFilename(file) {
 const requirePassword = false;
 
 // One way encrypted password
-// use the command "node tools/genpassword.js <your password (no spaces>" to generate the one-way hash.
+// use the command "node tools/genpassword.js <your password (no spaces)>" to generate the one-way hash.
 const password = "$2b$10$RuA0yFbUqtOl2i3iXC3D/uEPDVL5BHZzBAA03vW9bNh4s7yo7g1he";
 
 // Specify port, if undefined defaults to 8080.
