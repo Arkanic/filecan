@@ -25,6 +25,9 @@ export const startFormListener = () => {
     let progressbar = document.getElementById("progressbar");
     let progressinfo = document.getElementById("progressinfo");
 
+    let loading = document.getElementById("loading");
+    let content = document.getElementById("content");
+
     function loadStart(evt) {
         progressbox.classList.remove("hidden");
     }
@@ -33,13 +36,16 @@ export const startFormListener = () => {
         let progress = evt.loaded/evt.total*100;
         progressbar.value=progress;
         
-        progressinfo.innerHTML = `%${progress.toFixed(2)} - ${(evt.loaded/2014/1024).toFixed(2)}mb/${(evt.total/1024/1024).toFixed(2)}mb`;
+        progressinfo.innerHTML = `%${progress.toFixed(2)} - ${(evt.loaded/1024/1024).toFixed(2)}mb/${(evt.total/1024/1024).toFixed(2)}mb`;
     }
 
     function load(evt) {
         progressbox.classList.add("hidden");
+        content.classList.add("hidden");
+        loading.classList.remove("hidden");
     }
 
     function readyStateChange(evt) {
+        loading.classList.add("hidden");
     }
 }
