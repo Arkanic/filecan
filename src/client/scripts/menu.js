@@ -64,9 +64,11 @@ export const startFormListener = () => {
         loading.classList.remove("hidden");
     }
 
-    function readyStateChange(readyState, responseText) {
+    function readyStateChange(evt, xhr) {
+        if(xhr.readyState != 4) return;
         loading.classList.add("hidden");
-        resultstext.innerHTML = responseText;
+        console.log(xhr.responseText);
         results.classList.remove("hidden");
+        resultstext.innerHTML = xhr.responseText;
     }
 }
