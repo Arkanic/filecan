@@ -1,4 +1,4 @@
-import {config, sendData} from "./networking";
+import { config, sendData } from "./networking";
 
 export const stopLoading = () => {
     document.getElementById("loading").classList.add("hidden");
@@ -6,7 +6,7 @@ export const stopLoading = () => {
 }
 
 export const setupMenu = () => {
-    if(!config.requirePassword) {
+    if (!config.requirePassword) {
         document.getElementById("passwordbox").classList.add("hidden");
     }
 }
@@ -30,6 +30,7 @@ export const startFormListener = () => {
     let content = document.getElementById("content");
 
     let results = document.getElementById("results");
+    let resultstext = document.getElementById("resultstext");
 
     let dpsc;
     let last = 0;
@@ -46,14 +47,14 @@ export const startFormListener = () => {
 
     function progress(evt) {
         now = evt.loaded;
-        let progress = evt.loaded/evt.total*100;
-        progressbar.value=progress;
-        
+        let progress = evt.loaded / evt.total * 100;
+        progressbar.value = progress;
+
         progressinfo.innerHTML = `
         %${progress.toFixed(2)}
-        ${(evt.loaded/1024/1024).toFixed(2)}mb/${(evt.total/1024/1024).toFixed(2)}mb
-        ${(dif/1024/1024).toFixed(2)}mb/s
-        ETA ${((evt.total-evt.loaded)/dif).toFixed(2)}s
+        ${(evt.loaded / 1024 / 1024).toFixed(2)}mb/${(evt.total / 1024 / 1024).toFixed(2)}mb
+        ${(dif / 1024 / 1024).toFixed(2)}mb/s
+        ETA ${((evt.total - evt.loaded) / dif).toFixed(2)}s
         `;
     }
 
@@ -65,9 +66,7 @@ export const startFormListener = () => {
 
     function readyStateChange(readyState, responseText) {
         loading.classList.add("hidden");
-        let text = document.createElement("p");
-        text.innerHTML = responseText;
-        results.appendChild(text);
+        resultstext.innerHTML = responseText;
         results.classList.remove("hidden");
     }
 }
