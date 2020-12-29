@@ -76,6 +76,7 @@ export const startFormListener = () => {
                 let link = `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
                 let linkParentElement = document.createElement("p");
                 let linkElement = document.createElement("a");
+                linkElement.target = "_blank";
                 linkElement.href = link;
                 linkElement.appendChild(document.createTextNode(link));
                 linkParentElement.appendChild(linkElement);
