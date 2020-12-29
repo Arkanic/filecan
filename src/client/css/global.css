@@ -10,9 +10,12 @@ h1 {
     display: none;
 }
 .paragraph {
+    position: relative;
     padding-top: 5px;
     padding-left: 2%;
     padding-right: 98%;
+    padding-bottom: 5px;
+    width: 100%;
     background-color: rgba(230, 230, 230, 1);
 }
 img.center {

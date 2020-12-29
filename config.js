@@ -10,7 +10,7 @@ function genFilename(file) {
 }
 
 // Require password to upload files
-const requirePassword = false;
+const requirePassword = true;
 
 // One way encrypted password
 // use the command "node tools/genpassword.js <your password (no spaces)>" to generate the one-way hash.

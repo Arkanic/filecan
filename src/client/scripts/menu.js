@@ -30,7 +30,6 @@ export const startFormListener = () => {
     let content = document.getElementById("content");
 
     let results = document.getElementById("results");
-    let resultstext = document.getElementById("resultstext");
 
     let dpsc;
     let last = 0;
@@ -66,9 +65,28 @@ export const startFormListener = () => {
 
     function readyStateChange(evt, xhr) {
         if(xhr.readyState != 4) return;
+        let json = JSON.parse(xhr.responseText);
         loading.classList.add("hidden");
-        console.log(xhr.responseText);
         results.classList.remove("hidden");
-        resultstext.innerHTML = xhr.responseText;
+        if(json.success) {
+            for(let i in json.files) {
+                let itemdiv = document.createElement("div");
+                let filename = document.createElement("p");
+                filename.appendChild(document.createTextNode(json.files[i].originalname));
+                let link = `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
+                let linkParentElement = document.createElement("p");
+                let linkElement = document.createElement("a");
+                linkElement.href = link;
+                linkElement.appendChild(document.createTextNode(link));
+                linkParentElement.appendChild(linkElement);
+                itemdiv.appendChild(filename);
+                itemdiv.appendChild(linkParentElement);
+                results.appendChild(itemdiv);
+            }
+        } else {
+            let error = document.createElement("p");
+            error.appendChild(document.createTextNode(json.message));
+            results.appendChild(error);
+        }
     }
 }
