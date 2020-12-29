@@ -3,10 +3,11 @@
 // Generate the name for files when they are uploaded
 const path = require("path");
 const {customAlphabet} = require("nanoid");
+const extname = require("path-complete-extname");
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
 
 function genFilename(file) {
-    return nanoid() + path.extname(file.originalname); // random set of 6 characters + the file extension of the original file
+    return nanoid() + extname(file.originalname); // random set of 6 characters + the file extension of the original file
 }
 
 // Require password to upload files
