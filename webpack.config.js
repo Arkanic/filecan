@@ -4,14 +4,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
-const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
     mode: "production",
     optimization: {
         minimizer: [
-            new TerserJSPlugin({}),
-            new OptimizeCssAssetsWebpackPlugin({})
+            new TerserJSPlugin({})
         ]
     },
     entry: {
