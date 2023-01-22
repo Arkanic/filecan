@@ -9,10 +9,11 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         cb(null, nanoid() + path.extname(file.originalname));
-    }
+    },
 });
 const fileFilter = (req:any, file:any, cb:any) => {
-    cb(null, true);
+    if(req.path == "/api/upload") cb(null, true);
+    else cb(null, false);
 }
 
 module.exports = {storage, fileFilter};

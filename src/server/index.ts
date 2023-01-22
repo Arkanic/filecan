@@ -1,4 +1,5 @@
-import * as path from "path";
+import path from "path";
+import fs from "fs";
 import express from "express";
 import multer from "multer";
 import database, { DbConnection } from "./db";
@@ -11,7 +12,6 @@ database().then(db => {
     const app = express();
     app.use([
         require("cors")(),
-        express.static(__dirname + "/../upload"),
         express.static(__dirname + "/../dist"),
         express.static(__dirname + "/../public")
     ]);
@@ -22,7 +22,7 @@ database().then(db => {
 
     app.post("/api/upload", (req, res, next) => {
         auth(req, res, next);
-    }, upload.any(), (req, res, next) => {
+    }, upload.any(), async (req, res, next) => {
         try {
             let {files} = req;
             if (!files) throw new Error("no files found");
@@ -30,6 +30,19 @@ database().then(db => {
                 success: false,
                 message: "No files uploaded"
             });
+
+            for(let i in files) {
+                let file:Express.Multer.File = (files as unknown as any)[i];
+
+                await dbc.insert("files", {
+                    created: Date.now(),
+                    expires: Date.now() + (1000 * 60 * 60 * 6),
+                    original_filename: file.originalname,
+                    filename: file.filename,
+                    views: 0
+                });
+            }
+
             res.status(201).json({
                 success: true,
                 message: "File uploaded successfully",
@@ -52,6 +65,17 @@ database().then(db => {
         return res.status(200).json({
             requirePassword: config.requirePassword
         });
+    });
+
+    app.get("*", async (req, res) => {
+        let filename = path.basename(req.path);
+        let file = path.join(__dirname, "/../upload", filename);
+        if(file === "..") return res.status(403).send("🤓");
+
+        if(!fs.existsSync(file)) return res.status(404).send("File not found");
+        res.status(200).sendFile(file);
+
+        await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
 
     app.listen(config.port, () => console.log("Listener online"));
