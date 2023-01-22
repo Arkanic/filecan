@@ -1,6 +1,6 @@
-const path = require("path");
-const multer = require("multer");
-const {customAlphabet} = require("nanoid");
+import path from "path";
+import multer from "multer";
+import {customAlphabet} from "nanoid";
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
 
 const storage = multer.diskStorage({
@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
         cb(null, nanoid() + path.extname(file.originalname));
     }
 });
-const fileFilter = (req, file, cb) => {
+const fileFilter = (req:any, file:any, cb:any) => {
     cb(null, true);
 }
 
