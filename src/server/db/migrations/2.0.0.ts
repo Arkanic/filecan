@@ -1,6 +1,6 @@
 import {Knex} from "knex";
 
-export const up = (schema:Knex.SchemaBuilder) => {
+export const up = (schema:Knex.SchemaBuilder, db:Knex) => {
     return schema.createTable("files", table => {
         table.increments("id").primary();
         table.bigInteger("created").unsigned();

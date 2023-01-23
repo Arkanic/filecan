@@ -4,7 +4,7 @@ import fs from "fs";
 import {getMigration, getMigrations} from "./db/migrator";
 
 const DATA_DIR = "data";
-const VERSION = "2.0.0";
+const VERSION = "2.1.0";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
@@ -41,8 +41,9 @@ export async function initdb(db:knex.Knex<any, unknown[]>):Promise<knex.Knex.Sch
 
     let migrations = getMigrations(version);
     for(let i in migrations) {
+        console.log(`Upgrading to ${migrations[i]}`);
         let migration = await getMigration(migrations[i]);
-        migration.up(schema);
+        schema = await migration.up(schema, db);
     }
 
     createVersion(VERSION);

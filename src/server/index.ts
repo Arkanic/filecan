@@ -44,6 +44,7 @@ database().then(db => {
                     expires: (expiryLength > 0) ? Date.now() + expiryLength : 0, // if negative make it not expire
                     original_filename: file.originalname,
                     filename: file.filename,
+                    filesize: file.size,
                     views: 0
                 });
             }
