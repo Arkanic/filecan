@@ -23,6 +23,11 @@ database().then(db => {
     app.post("/api/upload", (req, res, next) => {
         auth(req, res, next);
     }, upload.any(), async (req, res, next) => {
+        let expiryLength = 1000 * 60 * 60 * 24; // 24 hours
+        if(req.body.expirylength)
+            if(typeof req.body.expirylength === "string")
+                expiryLength = parseInt(req.body.expirylength); // < 0 means do not expire
+
         try {
             let {files} = req;
             if (!files) throw new Error("no files found");
@@ -36,7 +41,7 @@ database().then(db => {
 
                 await dbc.insert("files", {
                     created: Date.now(),
-                    expires: Date.now() + (1000 * 60 * 60 * 6),
+                    expires: (expiryLength > 0) ? Date.now() + expiryLength : 0, // if negative make it not expire
                     original_filename: file.originalname,
                     filename: file.filename,
                     views: 0
@@ -50,7 +55,7 @@ database().then(db => {
             });
             for (let i in req.files) {
                 let file = (files as unknown as any)[i] as unknown as any;
-                console.log(`Successfully uploaded "${file.originalname}" as "${file.filename}"`);
+                console.log(`Successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return;
         } catch (error) {
@@ -79,4 +84,25 @@ database().then(db => {
     });
 
     app.listen(config.port, () => console.log("Listener online"));
+
+
+    // delete expired files
+    function expired(expires:number):boolean {
+        return Date.now() > expires;
+    }
+
+    async function purgeExpiredFiles(dbc:DbConnection) {
+        // get all files where current time is above expiry time, excluding those where expiry time is never
+        let files = await dbc.db.table("files").where("expires", "<", Date.now()).andWhereNot("expires", 0);
+        for(let file of files) {
+            console.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
+            fs.unlinkSync(path.join(__dirname, "../upload", file.filename));
+            await dbc.deleteById("files", file.id);
+        }
+    }
+
+    setInterval(() => {
+        purgeExpiredFiles(dbc);
+    }, 1000 * 60 * 60); // check every hour
+    purgeExpiredFiles(dbc);
 });

@@ -16,6 +16,7 @@ export const startFormListener = () => {
     let xhr;
     document.getElementById("submitbutton").onclick = () => {
         let formData = new FormData(form);
+        console.log(formData.get("expirylength"));
         let action = form.getAttribute("action");
         xhr = sendData(formData, action, loadStart, progress, load, readyStateChange);
 
