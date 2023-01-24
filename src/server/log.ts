@@ -17,12 +17,13 @@ export default class Logger {
     }
 
     checkExpiry() {
-        this.db.table("log").delete().where("expires", "<", Date.now() + timeToLive);
+        this.db("log").delete().where("time", "<", Date.now() - timeToLive).then(() => {});
     }
 
     message(color:string, content:string) {
-        this.db.table("log").insert({time: Date.now() + timeToLive, author: this.author, color, content});
-        displayMessage(this.author, color, content);
+        this.db("log").insert({time: Date.now(), author: this.author, color, content}).then(() => {
+            displayMessage(this.author, color, content);
+        });
     }
 
     log(content:string) {
