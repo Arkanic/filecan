@@ -1,10 +1,11 @@
 import * as knex from "knex";
 import fs from "fs";
+import Logger from "./log";
 
 import {getMigration, getMigrations} from "./db/migrator";
 
 const DATA_DIR = "data";
-const VERSION = "2.1.0";
+const VERSION = "2.1.1";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
@@ -34,6 +35,9 @@ function createVersion(version:string):void {
 
 export async function initdb(db:knex.Knex<any, unknown[]>):Promise<knex.Knex.SchemaBuilder> {
     let {schema} = db;
+
+    let logger = new Logger(db, "db");
+
     let version = "0.0.0";
     if(await schema.hasTable("files")) {
         version = readVersion();
@@ -41,7 +45,7 @@ export async function initdb(db:knex.Knex<any, unknown[]>):Promise<knex.Knex.Sch
 
     let migrations = getMigrations(version);
     for(let i in migrations) {
-        console.log(`Upgrading to ${migrations[i]}`);
+        logger.log(`Upgrading to ${migrations[i]}`);
         let migration = await getMigration(migrations[i]);
         schema = await migration.up(schema, db);
     }

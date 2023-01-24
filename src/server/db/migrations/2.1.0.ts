@@ -1,8 +1,11 @@
 import {Knex} from "knex";
 import fs from "fs";
 import path from "path";
+import Logger from "../../log";
 
 export const up = async (schema:Knex.SchemaBuilder, db:Knex) => {
+    let logger = new Logger(db, "v2.1.0 migrator");
+
     let newSchema = schema.alterTable("files", table => {
         table.bigInteger("filesize").unsigned().defaultTo(0);
     });
@@ -15,10 +18,12 @@ export const up = async (schema:Knex.SchemaBuilder, db:Knex) => {
         
         let filePath = path.join(uploadDir, file);
         let fileDetails = fs.statSync(filePath);
-        console.log(`${i}: ${filePath}, ${fileDetails.size}b`);
+        logger.log(`${i}: ${filePath}, ${fileDetails.size}b`);
 
         await db("files").update({filesize: fileDetails.size}).where("filename", file);
     }
 
     return newSchema;
 }
+
+export const down = (schema:Knex.SchemaBuilder, db:Knex) => {};

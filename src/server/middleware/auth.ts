@@ -1,8 +1,11 @@
 import * as express from "express";
 import bcrypt from "bcrypt";
+import Logger from "../log";
 const config = require("../../config");
 
 function auth(req:express.Request, res:express.Response, next:express.NextFunction) {
+    let logger = new Logger(res.locals.db, "auth");
+
     if(!config.requirePassword) return next();
     let password = req.headers.password;
     if(!password) {
@@ -10,7 +13,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
             success: false,
             message: "Password is missing"
         });
-        console.log("Attempted upload, password missing");
+        logger.warn("Attempted upload, password missing");
     } else if(typeof password === "object") {
         res.status(400).json({
             success: false,
@@ -25,7 +28,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
                     success: false,
                     message: "Incorrect password"
                 });
-                console.log("Attempted upload, incorrect password");
+                logger.warn("Attempted upload, incorrect password");
             }
         });
     }

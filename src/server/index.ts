@@ -3,17 +3,26 @@ import fs from "fs";
 import express from "express";
 import multer from "multer";
 import database, { DbConnection } from "./db";
+import Logger from "./log";
 
 const config = require("../config");
 
 database().then(db => {
     let dbc = new DbConnection(db);
 
+    const logger = new Logger(db, "main");
+    logger.log("Starting filecan...");
+    logger.log("Database loaded...");
+
     const app = express();
     app.use([
         require("cors")(),
         express.static(__dirname + "/../dist"),
-        express.static(__dirname + "/../public")
+        express.static(__dirname + "/../public"),
+        (req:express.Request, res:express.Response, next:express.NextFunction) => {
+            res.locals.db = db;
+            next();
+        }
     ]);
 
     const {storage, fileFilter} = require("./middleware/multerconf");
@@ -56,9 +65,9 @@ database().then(db => {
             });
             for (let i in req.files) {
                 let file = (files as unknown as any)[i] as unknown as any;
-                console.log(`Successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
+                logger.log(`Successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
-            return;
+            return next();
         } catch (error) {
             return res.status(500).json({
                 success: false,
@@ -84,7 +93,7 @@ database().then(db => {
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
 
-    app.listen(config.port, () => console.log("Listener online"));
+    app.listen(config.port, () => logger.log("Listener online"));
 
 
     // delete expired files
@@ -96,7 +105,7 @@ database().then(db => {
         // get all files where current time is above expiry time, excluding those where expiry time is never
         let files = await dbc.db.table("files").where("expires", "<", Date.now()).andWhereNot("expires", 0);
         for(let file of files) {
-            console.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
+            logger.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
             fs.unlinkSync(path.join(__dirname, "../upload", file.filename));
             await dbc.deleteById("files", file.id);
         }
