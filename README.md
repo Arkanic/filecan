@@ -7,7 +7,7 @@ Download or clone the repository onto the machine, then open your terminal insid
 
 Run the command `npm i` to install the required packages.
 
-Once that is done build the webpack code, using the command `npm run build`.
+Once that is done build code, using the command `npm run fullbuild`.
 
 Then, to start the server, run the command `npm run start`.
 

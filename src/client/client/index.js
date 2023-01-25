@@ -1,7 +1,7 @@
 import {getConfig, config} from "./scripts/networking";
 import {stopLoading, setupMenu, startFormListener} from "./scripts/menu";
 
-import "./css/global.css"
+import "../css/global.css"
 
 Promise.all([
     getConfig

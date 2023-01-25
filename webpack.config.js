@@ -13,10 +13,11 @@ module.exports = {
         ]
     },
     entry: {
-        index: "./src/client/index.js"
+        index: "./src/client/client/index.js",
+        admin: "./src/client/admin/index.js"
     },
     output: {
-        filename: "x.[contenthash].js",
+        filename: "[name]/x.[contenthash].js",
         path: path.resolve(__dirname, "dist")
     },
     optimization: {
@@ -52,8 +53,14 @@ module.exports = {
             filename: "x.[contenthash].css"
         }),
         new HtmlWebpackPlugin({
-            filename: "index.html",
-            template: "src/client/html/index.html"
+            filename: "index/index.html",
+            template: "src/client/client/html/index.html",
+            chunks: ["index"]
+        }),
+        new HtmlWebpackPlugin({
+            filename: "admin/index.html",
+            template: "src/client/admin/html/index.html",
+            chunks: ["admin"]
         }),
         new CleanWebpackPlugin()
     ]

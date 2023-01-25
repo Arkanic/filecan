@@ -17,13 +17,16 @@ database().then(db => {
     const app = express();
     app.use([
         require("cors")(),
-        express.static(__dirname + "/../dist"),
+        express.static(__dirname + "/../dist/"),
+        express.static(__dirname + "/../dist/index"),
         express.static(__dirname + "/../public"),
         (req:express.Request, res:express.Response, next:express.NextFunction) => {
             res.locals.db = db;
             next();
         }
     ]);
+
+    app.use("admin", express.static(__dirname + "/../dist/admin"));
 
     const {storage, fileFilter} = require("./middleware/multerconf");
     const upload = multer({ storage, fileFilter });
@@ -100,7 +103,7 @@ database().then(db => {
         let files = await dbc.db.table("files").where("expires", "<", Date.now()).andWhereNot("expires", 0);
         for(let file of files) {
             logger.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
-            fs.unlinkSync(path.join(__dirname, "../upload", file.filename));
+            fs.unlinkSync(path.join(__dirname, "../data/upload", file.filename));
             await dbc.deleteById("files", file.id);
         }
     }
