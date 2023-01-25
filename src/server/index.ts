@@ -84,7 +84,7 @@ database().then(db => {
 
     app.get("*", async (req, res) => {
         let filename = path.basename(req.path);
-        let file = path.join(__dirname, "/../upload", filename);
+        let file = path.join(__dirname, "/../data/upload", filename);
         if(file === "..") return res.status(403).send("🤓");
 
         if(!fs.existsSync(file)) return res.status(404).send("File not found");
@@ -94,12 +94,6 @@ database().then(db => {
     });
 
     app.listen(config.port, () => logger.log("Listener online"));
-
-
-    // delete expired files
-    function expired(expires:number):boolean {
-        return Date.now() > expires;
-    }
 
     async function purgeExpiredFiles(dbc:DbConnection) {
         // get all files where current time is above expiry time, excluding those where expiry time is never

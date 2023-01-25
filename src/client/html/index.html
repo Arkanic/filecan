@@ -18,14 +18,17 @@
                         <input type="password" id="password" name="password">
                     </div>
                     <br>
-                    <label for="expirylength">Expiry: </label>
-                    <select name="expirylength" id="expirylength">
-                        <option value="3600000">1 Hour</option>
-                        <option value="86400000">1 Day</option>
-                        <option value="2592000000">1 Month</option>
-                        <option value="31536000000">1 Year</option>
-                        <option value="-1">Never</option>
-                    </select>
+                    <div>
+                        <label for="expirylength">Expiry: </label>
+                        <select name="expirylength" id="expirylength">
+                            <option value="3600000">1 Hour</option>
+                            <option value="86400000">1 Day</option>
+                            <option value="604800000">1 Week</option>
+                            <option value="2592000000">1 Month</option>
+                            <option value="31536000000">1 Year</option>
+                            <option value="-1">Never</option>
+                        </select>
+                    </div>
                     <div id="errorbox" class="hidden">
                         <p id="error"></p>
                     </div>

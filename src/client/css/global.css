@@ -12,12 +12,14 @@ h1 {
 .paragraph {
     position: relative;
     padding-top: 5px;
-    padding-left: 2%;
-    padding-right: 98%;
     padding-bottom: 5px;
     width: 100%;
     background-color: rgba(230, 230, 230, 1);
 }
+.paragraph * {
+    margin-left: 10px;
+}
+
 img.center {
     position: absolute;
     top: 0;

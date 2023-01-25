@@ -1,14 +1,18 @@
 import * as knex from "knex";
 import fs from "fs";
+import path from "path";
 
 import {getMigration, getMigrations} from "./db/migrator";
 
 const DATA_DIR = "data";
+const UPLOAD_DIR = "upload";
 const VERSION = "2.1.1";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
         if(!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+        let uploadPath = path.join(DATA_DIR, UPLOAD_DIR);
+        if(!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
 
         let db = knex.default({
             client: "better-sqlite3",

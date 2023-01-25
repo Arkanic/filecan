@@ -18,8 +18,14 @@ const requirePassword = true;
 // this one is "test".
 const password = "$2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS";
 
+// Password for admin console
+// generate same way as above
+// this password is required as it provides access to the http admin panel (show logs etc)
+// this one is "test"
+const adminPassword = "$2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS";
+
 // Specify port, if undefined defaults to 8080.
 const port = undefined || "8080";
 
 
-module.exports = {genFilename, requirePassword, password, port};
+module.exports = {genFilename, requirePassword, password, adminPassword, port};
