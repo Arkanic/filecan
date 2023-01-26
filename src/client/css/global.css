@@ -28,3 +28,11 @@ img.center {
     right: 0;
     margin: auto;
 }
+
+div.logbox {
+    background-color: black;
+}
+
+div.logbox p {
+    color: white;
+}

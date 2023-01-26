@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import express from "express";
+import express, { application } from "express";
 import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
@@ -33,7 +33,7 @@ database().then(db => {
     const auth = require("./middleware/auth");
 
     app.post("/api/upload", (req, res, next) => {
-        auth(req, res, next);
+        auth(req, res, next, false);
     }, upload.any(), async (req, res, next) => {
         let expiryLength = 1000 * 60 * 60 * 24; // 24 hours
         if(req.body.expirylength)
@@ -82,6 +82,20 @@ database().then(db => {
     app.get("/api/config", (req, res) => {
         return res.status(200).json({
             requirePassword: config.requirePassword
+        });
+    });
+
+    app.post("/api/admin/logs", (req, res, next) => {
+        auth(req, res, next, true);
+    }, async (req, res, next) => {
+        let logs;
+        if(req.body)
+            if(req.body.hasOwnProperty("minimumtime")) logs = await db("log").where("time", ">", parseInt(req.body.minimumtime));
+            else logs = await db("log").select("*");
+        else logs = await db("log").select("*");
+        res.status(200).json({
+            success: true,
+            logs: logs.map(x => {return {time: x.time, author: x.author, color: x.color, content: x.content}})
         });
     });
 
