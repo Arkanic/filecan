@@ -8,7 +8,7 @@ export const up = async (schema:Knex.SchemaBuilder, db:Knex) => {
         table.bigInteger("filesize").unsigned().defaultTo(0);
     });
 
-    let uploadDir = path.join(__dirname, "../../../", "upload");
+    let uploadDir = path.join(__dirname, "../../../", "data/upload");
     let files = fs.readdirSync(uploadDir);
     for(let i = 0; i < files.length; i++) {
         let file = files[i];
