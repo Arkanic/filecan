@@ -16,13 +16,7 @@ export default ():Promise<knex.Knex<any, unknown[]>> => {
             console.log("Using pg (external)");
             db = knex.default({
                 client: "pg",
-                connection: {
-                    host: process.env.PG_URL,
-                    port: parseInt(process.env.PG_PORT || "5432"),
-                    user: process.env.PG_USER,
-                    password: process.env.PG_PASSWORD,
-                    database: process.env.PG_DATABASE
-                }
+                connection: process.env.PG_URL
             });
         } else { 
             console.log("Using sqlite (internal)");
