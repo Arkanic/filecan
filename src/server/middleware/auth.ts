@@ -13,7 +13,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
             success: false,
             message: "Password is missing"
         });
-        logger.warn("Attempted access, password missing");
+        logger.warn(`${req.ip} attempted access, password missing`);
     } else if(typeof password === "object") {
         res.status(400).json({
             success: false,
@@ -36,7 +36,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
                     success: false,
                     message: "Incorrect password"
                 });
-                logger.warn("Attempted access, incorrect password");
+                logger.warn(`${req.ip} attempted access, incorrect password`);
             }
         });
     }

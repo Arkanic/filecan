@@ -15,6 +15,8 @@ database().then(db => {
     logger.log("Database loaded...");
 
     const app = express();
+    app.set("trust proxy", true);
+
     app.use([
         require("cors")(),
         express.static(__dirname + "/../dist/"),
@@ -62,7 +64,7 @@ database().then(db => {
             });
             for (let i in req.files) {
                 let file = (files as unknown as any)[i] as unknown as any;
-                logger.log(`Successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
+                logger.log(`${req.ip} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return next();
         } catch (error) {
