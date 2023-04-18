@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import express, { application } from "express";
+import express from "express";
 import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
@@ -42,12 +42,6 @@ database().then(db => {
 
         try {
             let {files} = req;
-            if (!files) throw new Error("no files found");
-            if (files.length <= 0) return res.status(401).json({
-                success: false,
-                message: "No files uploaded"
-            });
-
             for(let i in files) {
                 let file:Express.Multer.File = (files as unknown as any)[i];
 
