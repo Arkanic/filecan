@@ -20,7 +20,15 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
             message: "Send password once only"
         });
     } else {
-        bcrypt.compare(password, admin ? config.adminPassword : config.password, (err, matches) => {
+        let adminPasswordh:string, passwordh:string;
+        if(process.env.PASSWORD) {
+            adminPasswordh = process.env.ADMIN_PASSWORD as string;
+            passwordh = process.env.PASSWORD as string;
+        } else {
+            adminPasswordh = config.adminPassword;
+            passwordh = config.password;
+        }
+        bcrypt.compare(password, admin ? adminPasswordh : passwordh, (err, matches) => {
             if(err) throw err;
             if(matches) next();
             else {

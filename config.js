@@ -16,12 +16,14 @@ const requirePassword = true;
 // One way encrypted password
 // use the command "node tools/genpassword.js <your password (no spaces)>" to generate the one-way hash.
 // this one is "test".
+// alternatively use PASSWORD env variable
 const password = "$2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS";
 
 // Password for admin console
 // generate same way as above
 // this password is required as it provides access to the http admin panel (show logs etc)
 // this one is "test"
+// alternatively use ADMIN_PASSWORD env variable
 const adminPassword = "$2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS";
 
 // Specify port, if undefined defaults to 8080.
