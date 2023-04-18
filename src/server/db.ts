@@ -11,13 +11,29 @@ export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
         if(!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 
-        let db = knex.default({
-            client: "better-sqlite3",
-            connection: {
-                filename: `./${DATA_DIR}/filecan.db`
-            },
-            useNullAsDefault: true
-        });
+        let db:knex.Knex<any, unknown[]> | PromiseLike<knex.Knex<any, unknown[]>>;
+        if(process.env.PG_URL) {
+            console.log("Using pg (external)");
+            db = knex.default({
+                client: "pg",
+                connection: {
+                    host: process.env.PG_URL,
+                    port: parseInt(process.env.PG_PORT || "5432"),
+                    user: process.env.PG_USER,
+                    password: process.env.PG_PASSWORD,
+                    database: process.env.PG_DATABASE
+                }
+            });
+        } else { 
+            console.log("Using sqlite (internal)");
+            db = knex.default({
+                client: "better-sqlite3",
+                connection: {
+                    filename: `./${DATA_DIR}/filecan.db`
+                },
+                useNullAsDefault: true
+            });
+        }
 
         initdb(db).then((_) => {
             resolve(db);
