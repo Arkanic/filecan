@@ -4,9 +4,6 @@ import {customAlphabet} from "nanoid";
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "data/upload");
-    },
     filename: (req, file, cb) => {
         cb(null, nanoid() + path.extname(file.originalname));
     },

@@ -53,6 +53,7 @@ database().then(db => {
                     original_filename: file.originalname,
                     filename: file.filename,
                     filesize: file.size,
+                    data: fs.readFileSync(file.path),
                     views: 0
                 });
             }
@@ -68,6 +69,7 @@ database().then(db => {
             }
             return next();
         } catch (error) {
+            logger.log(JSON.stringify(error));
             return res.status(500).json({
                 success: false,
                 messsage: "Internal server error."
@@ -97,11 +99,10 @@ database().then(db => {
 
     app.get("*", async (req, res) => {
         let filename = path.basename(req.path);
-        let file = path.join(__dirname, "/../data/upload", filename);
-        if(file === "..") return res.status(403).send("🤓");
 
-        if(!fs.existsSync(file)) return res.status(404).send("File not found");
-        res.status(200).sendFile(file);
+        let files = await dbc.db("files").select().where("filename", filename);
+        if(files.length < 1) res.status(404).send("not found");
+        res.status(200).send(files[0].data);
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
