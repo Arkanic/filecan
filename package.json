@@ -41,6 +41,7 @@
     "multer": "^1.4.5-lts.1",
     "nanoid": "^3.1.20",
     "path-complete-extname": "^1.0.0",
+    "pg": "^8.10.0",
     "pg-native": "^3.0.1",
     "terser-webpack-plugin": "^5.0.3",
     "typescript": "^5.0.4",
