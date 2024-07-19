@@ -1,6 +1,5 @@
 import * as knex from "knex";
 import fs from "fs";
-import path from "path";
 
 import {getMigration, getMigrations} from "./db/migrator";
 

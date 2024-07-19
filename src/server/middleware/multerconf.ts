@@ -1,11 +1,10 @@
 import path from "path";
 import multer from "multer";
-import {customAlphabet} from "nanoid";
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 6);
+import gid from "generate-unique-id";
 
 const storage = multer.diskStorage({
     filename: (req, file, cb) => {
-        cb(null, nanoid() + path.extname(file.originalname));
+        cb(null, gid({length: 6}) + path.extname(file.originalname));
     },
 });
 const fileFilter = (req:any, file:any, cb:any) => {

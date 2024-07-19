@@ -65,7 +65,7 @@ database().then(db => {
             });
             for (let i in req.files) {
                 let file = (files as unknown as any)[i] as unknown as any;
-                logger.log(`${req.ip} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
+                logger.log(`upload ${req.ip} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return next();
         } catch (error) {
@@ -101,8 +101,13 @@ database().then(db => {
         let filename = path.basename(req.path);
 
         let files = await dbc.db("files").select().where("filename", filename);
-        if(files.length < 1) res.status(404).send("not found");
+        if(files.length < 1) {
+            res.status(404).send("not found");
+            logger.log(`serve 404 ${filename}`);
+            return;
+        }
         res.status(200).send(files[0].data);
+        logger.log(`serve 200 ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
