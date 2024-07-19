@@ -13,12 +13,13 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
             success: false,
             message: "Password is missing"
         });
-        logger.warn(`${req.ip} attempted access, password missing`);
+        logger.warn(`[auth fail] [missing] ${req.ip} attempted access, password missing`);
     } else if(typeof password === "object") {
         res.status(400).json({
             success: false,
             message: "Send password once only"
         });
+        logger.warn(`[auth fail] [malformed] ${req.ip} attempted access, malformed request`);
     } else {
         let adminPasswordh:string, passwordh:string;
         if(process.env.PASSWORD) {
@@ -36,7 +37,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
                     success: false,
                     message: "Incorrect password"
                 });
-                logger.warn(`${req.ip} attempted access, incorrect password`);
+                logger.warn(`[auth fail] [fail] ${req.ip} attempted access, incorrect password`);
             }
         });
     }
