@@ -53,9 +53,9 @@ database().then(db => {
                     original_filename: file.originalname,
                     filename: file.filename,
                     filesize: file.size,
-                    data: fs.readFileSync(file.path),
                     views: 0
                 });
+                fs.copyFileSync(file.path, path.join("data/files", file.filename));
             }
 
             res.status(201).json({
@@ -100,14 +100,13 @@ database().then(db => {
     app.get("*", async (req, res) => {
         let filename = path.basename(req.path);
 
-        let files = await dbc.db("files").select().where("filename", filename);
-        if(files.length < 1) {
+        if(!fs.existsSync(path.join("data/files", filename))) {
             res.status(404).send("not found");
-            logger.log(`serve 404 ${filename}`);
+            logger.log(`[serve] 404 ${filename}`);
             return;
         }
-        res.status(200).send(files[0].data);
-        logger.log(`serve 200 ${filename}`)
+        res.status(200).sendFile(path.join(__dirname, "../data/files", filename));
+        logger.log(`[serve] 200 ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
@@ -119,7 +118,7 @@ database().then(db => {
         let files = await dbc.db.table("files").where("expires", "<", Date.now()).andWhereNot("expires", 0);
         for(let file of files) {
             logger.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
-            fs.unlinkSync(path.join(__dirname, "../data/upload", file.filename));
+            fs.unlinkSync(path.join("data/files", file.filename));
             await dbc.deleteById("files", file.id);
         }
     }

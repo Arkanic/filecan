@@ -4,7 +4,7 @@ import fs from "fs";
 import {getMigration, getMigrations} from "./db/migrator";
 
 const DATA_DIR = "data";
-const VERSION = "2.2.0";
+const VERSION = "3.0.0";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
