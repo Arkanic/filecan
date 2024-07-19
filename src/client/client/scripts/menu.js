@@ -14,10 +14,15 @@ export const setupMenu = () => {
 export const startFormListener = () => {
     let form = document.getElementById("form");
     let xhr;
+
+    document.getElementsByTagName("body")[0].addEventListener("keypress", e => {
+        if(e.key == "Enter") document.getElementById("submitbutton").click();
+    });
+
     document.getElementById("submitbutton").onclick = () => {
         let formData = new FormData(form);
         console.log(formData.get("expirylength"));
-        let action = form.getAttribute("action");
+        let action = "/api/upload";
         xhr = sendData(formData, action, loadStart, progress, load, readyStateChange);
 
         return false;
