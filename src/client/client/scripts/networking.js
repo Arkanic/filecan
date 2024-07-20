@@ -5,7 +5,12 @@ export const getConfig = new Promise(resolve => {
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
         if(xhr.status == 200) {
-            config = JSON.parse(xhr.responseText);
+            try {
+                config = JSON.parse(xhr.responseText);
+            } catch(e) {
+                console.log(xhr.responseText);
+                throw e;
+            }
             resolve();
         } else {
 

@@ -5,6 +5,7 @@ import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
 import {getIP} from "./ip";
+import {maxFileSize} from "../../config";
 
 const config = require("../config");
 
@@ -32,7 +33,13 @@ database().then(db => {
     app.use("admin", express.static(__dirname + "/../dist/admin"));
 
     const {storage, fileFilter} = require("./middleware/multerconf");
-    const upload = multer({ storage, fileFilter });
+    const upload = multer({
+        storage,
+        fileFilter,
+        limits: {
+            fileSize: maxFileSize
+        }
+    });
     const auth = require("./middleware/auth");
 
     app.post("/api/upload", (req, res, next) => {

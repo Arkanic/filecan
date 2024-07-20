@@ -25,5 +25,8 @@ const port = undefined || "8080";
 // set to TRUE if reverse proxy is being used (to check for x-forwarded-for header)
 const reverseProxy = false;
 
+// maximum file size that can be uploaded
+const maxFileSize = 100 * 1000 * 1000; // 100mb
 
-module.exports = {reverseProxy, requirePassword, password, adminPassword, port};
+
+module.exports = {maxFileSize, reverseProxy, requirePassword, password, adminPassword, port};
