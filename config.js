@@ -22,5 +22,8 @@ const adminPassword = "$2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/
 // Specify port, if undefined defaults to 8080.
 const port = undefined || "8080";
 
+// set to TRUE if reverse proxy is being used (to check for x-forwarded-for header)
+const reverseProxy = false;
 
-module.exports = {requirePassword, password, adminPassword, port};
+
+module.exports = {reverseProxy, requirePassword, password, adminPassword, port};

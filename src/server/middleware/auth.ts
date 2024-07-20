@@ -1,6 +1,7 @@
 import * as express from "express";
 import bcrypt from "bcrypt";
 import Logger from "../log";
+import {getIP} from "../ip";
 const config = require("../../config");
 
 function auth(req:express.Request, res:express.Response, next:express.NextFunction, admin:boolean) {
@@ -13,13 +14,13 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
             success: false,
             message: "Password is missing"
         });
-        logger.warn(`[auth fail] [missing] ${req.ip} attempted access, password missing`);
+        logger.warn(`[auth fail] [missing] ${getIP(req)} attempted access, password missing`);
     } else if(typeof password === "object") {
         res.status(400).json({
             success: false,
             message: "Send password once only"
         });
-        logger.warn(`[auth fail] [malformed] ${req.ip} attempted access, malformed request`);
+        logger.warn(`[auth fail] [malformed] ${getIP(req)} attempted access, malformed request`);
     } else {
         let adminPasswordh:string, passwordh:string;
         if(process.env.PASSWORD) {
@@ -37,7 +38,7 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
                     success: false,
                     message: "Incorrect password"
                 });
-                logger.warn(`[auth fail] [fail] ${req.ip} attempted access, incorrect password`);
+                logger.warn(`[auth fail] [fail] ${getIP(req)} attempted access, incorrect password`);
             }
         });
     }

@@ -4,6 +4,7 @@ import express from "express";
 import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
+import {getIP} from "./ip";
 
 const config = require("../config");
 
@@ -65,7 +66,7 @@ database().then(db => {
             });
             for (let i in req.files) {
                 let file = (files as unknown as any)[i] as unknown as any;
-                logger.log(`upload ${req.ip} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
+                logger.log(`upload ${getIP(req)} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return next();
         } catch (error) {
@@ -102,11 +103,11 @@ database().then(db => {
 
         if(!fs.existsSync(path.join("data/files", filename))) {
             res.status(404).send("not found");
-            logger.log(`[serve] 404 ${req.ip} ${filename}`);
+            logger.log(`[serve] 404 ${getIP(req)} ${filename}`);
             return;
         }
         res.status(200).sendFile(path.join(__dirname, "../data/files", filename));
-        logger.log(`[serve] 200 ${req.ip} ${filename}`)
+        logger.log(`[serve] 200 ${getIP(req)} ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
