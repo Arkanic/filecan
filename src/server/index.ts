@@ -102,11 +102,11 @@ database().then(db => {
 
         if(!fs.existsSync(path.join("data/files", filename))) {
             res.status(404).send("not found");
-            logger.log(`[serve] 404 ${filename}`);
+            logger.log(`[serve] 404 ${req.ip} ${filename}`);
             return;
         }
         res.status(200).sendFile(path.join(__dirname, "../data/files", filename));
-        logger.log(`[serve] 200 ${filename}`)
+        logger.log(`[serve] 200 ${req.ip} ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
     });
