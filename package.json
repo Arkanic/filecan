@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Arkanic/filecan#readme",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/express": "^5.0.0",
+    "@types/express": "^4.17.21",
     "@types/multer": "^1.4.11"
   },
   "dependencies": {
