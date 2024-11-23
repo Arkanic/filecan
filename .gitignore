@@ -1,7 +1,4 @@
 /node_modules/
-package-lock.json
-/upload/
 /dist/
 /build/
 /data/
-config.js
