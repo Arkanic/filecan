@@ -1,15 +1,15 @@
 {
   "name": "filecan",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "node.js file hoster",
-  "main": "index.js",
+  "main": "src/server/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dist": "webpack --config webpack.config.js --progress",
-    "build": "tsc",
-    "fullbuild": "npm run dist && npm run build",
+    "client-build": "webpack --config webpack.config.js --progress",
+    "server-build": "tsc",
+    "build": "npm run client-build && npm run server-build",
     "start": "node ./build/index.js",
-    "quick": "npm run fullbuild && npm run start"
+    "quick": "npm run build && npm run start"
   },
   "repository": {
     "type": "git",
