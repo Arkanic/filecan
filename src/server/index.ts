@@ -5,6 +5,8 @@ import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
 import {getIP} from "./ip";
+import {storage, fileFilter} from "./middleware/multerconf";
+import auth from "./middleware/auth";
 import config from "./config";
 
 database().then(db => {
@@ -19,18 +21,17 @@ database().then(db => {
 
     app.use([
         require("cors")(),
-        express.static(__dirname + "/../dist/"),
-        express.static(__dirname + "/../dist/index"),
-        express.static(__dirname + "/../public"),
+        express.static(config.staticFilesPath),
+        express.static(path.join(config.staticFilesPath, "root/")),
+        express.static(path.join(config.staticFilesPath, "index/")),
         (req:express.Request, res:express.Response, next:express.NextFunction) => {
             res.locals.db = db;
             next();
         }
     ]);
 
-    app.use("admin", express.static(__dirname + "/../dist/admin"));
+    app.use("admin", express.static(path.join(config.staticFilesPath, "index")));
 
-    const {storage, fileFilter} = require("./middleware/multerconf");
     const upload = multer({
         storage,
         fileFilter,
@@ -38,7 +39,6 @@ database().then(db => {
             fileSize: config.maxFilesizeMegabytes * 1000 * 1000
         }
     });
-    const auth = require("./middleware/auth");
 
     app.post("/api/upload", (req, res, next) => {
         auth(req, res, next, false);
@@ -61,7 +61,7 @@ database().then(db => {
                     filesize: file.size,
                     views: 0
                 });
-                fs.copyFileSync(file.path, path.join("data/files", file.filename));
+                fs.copyFileSync(file.path, path.join(config.filecanDataPath, "files/", file.filename));
             }
 
             res.status(201).json({
@@ -106,12 +106,12 @@ database().then(db => {
     app.get("*", async (req, res) => {
         let filename = path.basename(req.path);
 
-        if(!fs.existsSync(path.join("data/files", filename))) {
+        if(!fs.existsSync(path.join(config.filecanDataPath, "files/", filename))) {
             res.status(404).send("not found");
             logger.log(`[serve] 404 ${getIP(req)} ${filename}`);
             return;
         }
-        res.status(200).sendFile(path.join(__dirname, "../data/files", filename));
+        res.status(200).sendFile(path.join(__dirname, "../", config.filecanDataPath, "files/", filename));
         logger.log(`[serve] 200 ${getIP(req)} ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
@@ -124,7 +124,7 @@ database().then(db => {
         let files = await dbc.db.table("files").where("expires", "<", Date.now()).andWhereNot("expires", 0);
         for(let file of files) {
             logger.log(`Deleted expired file ${file.filename} (${file.original_filename})`);
-            fs.unlinkSync(path.join("data/files", file.filename));
+            fs.unlinkSync(path.join(config.filecanDataPath, "files", file.filename));
             await dbc.deleteById("files", file.id);
         }
     }

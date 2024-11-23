@@ -22,3 +22,9 @@ reverseProxy: false
 
 # Maximum allowed file upload size in megabytes
 maxFilesizeMegabytes: 100
+
+# Path to store database and uploaded files. If path is empty it will be constructed automatically
+filecanDataPath: ./data
+
+# Path that static web files are located for hosting
+staticFilesPath: ./dist

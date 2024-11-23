@@ -1,14 +1,15 @@
 import * as knex from "knex";
 import fs from "fs";
+import path from "path";
+import config from "./config";
 
 import {getMigration, getMigrations} from "./db/migrator";
 
-const DATA_DIR = "data";
 const VERSION = "3.0.0";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {
-        if(!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+        if(!fs.existsSync(config.filecanDataPath)) fs.mkdirSync(config.filecanDataPath);
 
         let db:knex.Knex<any, unknown[]> | PromiseLike<knex.Knex<any, unknown[]>>;
         if(process.env.PG_URL) {
@@ -22,7 +23,7 @@ export default ():Promise<knex.Knex<any, unknown[]>> => {
             db = knex.default({
                 client: "better-sqlite3",
                 connection: {
-                    filename: `./${DATA_DIR}/filecan.db`
+                    filename: path.join(config.filecanDataPath, "filecan.db")
                 },
                 useNullAsDefault: true
             });
@@ -35,11 +36,11 @@ export default ():Promise<knex.Knex<any, unknown[]>> => {
 }
 
 function readVersion():string {
-    return fs.readFileSync(`./${DATA_DIR}/version`).toString();
+    return fs.readFileSync(path.join(config.filecanDataPath, "version")).toString();
 }
 
 function createVersion(version:string):void {
-    fs.writeFileSync(`./${DATA_DIR}/version`, version);
+    fs.writeFileSync(path.join(config.filecanDataPath, "version"), version);
 }
 
 export async function initdb(db:knex.Knex<any, unknown[]>):Promise<knex.Knex.SchemaBuilder> {

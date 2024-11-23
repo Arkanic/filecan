@@ -14,7 +14,11 @@ export interface Config {
 
     reverseProxy:boolean;
 
-    maxFilesizeMegabytes:number
+    maxFilesizeMegabytes:number;
+
+    filecanDataPath:string;
+
+    staticFilesPath:string;
 }
 
 /**

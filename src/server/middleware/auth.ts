@@ -4,7 +4,7 @@ import Logger from "../log";
 import {getIP} from "../ip";
 import config from "../config";
 
-function auth(req:express.Request, res:express.Response, next:express.NextFunction, admin:boolean) {
+export default function auth(req:express.Request, res:express.Response, next:express.NextFunction, admin:boolean) {
     let logger = new Logger(res.locals.db, "auth");
 
     if(!config.requirePassword && !admin) return next();
@@ -38,5 +38,3 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
         });
     }
 }
-
-module.exports = auth;
