@@ -5,9 +5,7 @@ import multer from "multer";
 import database, { DbConnection } from "./db";
 import Logger from "./log";
 import {getIP} from "./ip";
-import {maxFileSize} from "../../config";
-
-const config = require("../config");
+import config from "./config";
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -37,7 +35,7 @@ database().then(db => {
         storage,
         fileFilter,
         limits: {
-            fileSize: maxFileSize
+            fileSize: config.maxFilesizeMegabytes * 1000 * 1000
         }
     });
     const auth = require("./middleware/auth");

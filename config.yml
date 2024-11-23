@@ -1,0 +1,24 @@
+# FILECAN CONFIGURATION FILE
+# these are "insane defaults". It would be a good idea to change them.
+
+# Require a password to upload a file?
+# RECOMMEND THIS BE TRUE FOR ANY PUBLIC-FACING INSTANCE
+requirePassword: false
+
+# Hashed password to upload file. This is currently set to "test"
+# use the command "node tools/genpassword.js <your password (no spaces)>" to generate a new password to replace this
+# this can be ignored if you have requirePassword set to false
+password: $2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS
+
+# Hashed password for admin panel. This is currently set to "test" as well
+# use the command "node tools/genpassword.js <your password (no spaces)>" to generate a new password to replace this
+adminPassword: $2b$10$cgz0yz/mv/HYZEVMiRaNqOUNi6Blay1qGX/O.0Cu8gCR1Apcz/pGS
+
+# Port to host web service on.
+port: 8080
+
+# Is the instance being run behind a reverse proxy?
+reverseProxy: false
+
+# Maximum allowed file upload size in megabytes
+maxFilesizeMegabytes: 100

@@ -2,7 +2,7 @@ import * as express from "express";
 import bcrypt from "bcrypt";
 import Logger from "../log";
 import {getIP} from "../ip";
-const config = require("../../config");
+import config from "../config";
 
 function auth(req:express.Request, res:express.Response, next:express.NextFunction, admin:boolean) {
     let logger = new Logger(res.locals.db, "auth");
@@ -23,13 +23,8 @@ function auth(req:express.Request, res:express.Response, next:express.NextFuncti
         logger.warn(`[auth fail] [malformed] ${getIP(req)} attempted access, malformed request`);
     } else {
         let adminPasswordh:string, passwordh:string;
-        if(process.env.PASSWORD) {
-            adminPasswordh = process.env.ADMIN_PASSWORD as string;
-            passwordh = process.env.PASSWORD as string;
-        } else {
-            adminPasswordh = config.adminPassword;
-            passwordh = config.password;
-        }
+        adminPasswordh = config.adminPassword;
+        passwordh = config.password;
         bcrypt.compare(password, admin ? adminPasswordh : passwordh, (err, matches) => {
             if(err) throw err;
             if(matches) next();

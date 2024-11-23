@@ -16,12 +16,12 @@ Look into the config file for options to change how the server works.
 If you want your server to be public to the internet, you need to port forward the port "8080", or the port that you have specified in the configuration file.
 
 ## Usage
-The default password for the server is "test", however you can turn the password functionality off entirely (set `requirePassword` to `false` in config.js, using your preferred text editor.
+The default password for the server is "test".
 
 ### How to change the passowrd
 find the "tools" folder inside the code (the folder is in the same directory as `index.js`), and open the terminal inside of it.
 
-Run the command `node genpassword.js <your password>`, replacing `<your password>` with the password you want to use. This script will hash the password into a one-way function, so that it is unreadable. Replace the password variable in config.js with the random string the script spat out, using your favorite text editor.
+Run the command `node genpassword.js <your password>`, replacing `<your password>` with the password you want to use. This script will hash the password into a one-way function, so that it is unreadable. Replace the password parameter in config.yml with the random string the script spat out, using your favorite text editor.
 
 You should now be able to run the server as normal, with the new password being the one that works.
 
