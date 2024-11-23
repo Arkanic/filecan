@@ -7,7 +7,7 @@ Download or clone the repository onto the machine, then open your terminal insid
 
 Run the command `npm i` to install the required packages.
 
-Once that is done build code, using the command `npm run fullbuild`.
+Once that is done build code, using the command `npm run build`.
 
 Then, to start the server, run the command `npm run start`.
 
@@ -27,4 +27,3 @@ You should now be able to run the server as normal, with the new password being 
 
 ## Credits
 [https://github.com/Arkanic](Arkanic)
-The best way to contact me would probably be through discord. My handle is Arkanic#3976.
