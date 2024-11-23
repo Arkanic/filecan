@@ -18,7 +18,7 @@ If you want your server to be public to the internet, you need to port forward t
 ## Usage
 The default password for the server is "test".
 
-### How to change the passowrd
+### How to change the password
 find the "tools" folder inside the code (the folder is in the same directory as `index.js`), and open the terminal inside of it.
 
 Run the command `node genpassword.js <your password>`, replacing `<your password>` with the password you want to use. This script will hash the password into a one-way function, so that it is unreadable. Replace the password parameter in config.yml with the random string the script spat out, using your favorite text editor.
