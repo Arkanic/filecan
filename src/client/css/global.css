@@ -31,6 +31,8 @@ img.center {
 
 div.logbox {
     background-color: black;
+    height: 400px;
+    overflow-y: auto;
 }
 
 div.logbox p {
