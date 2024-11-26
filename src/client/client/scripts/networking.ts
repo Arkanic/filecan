@@ -1,6 +1,6 @@
 export let config;
 
-export const getConfig = new Promise(resolve => {
+export const getConfig = new Promise<void>(resolve => {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
@@ -31,6 +31,6 @@ export const sendData = (formData, action, loadStart, progress, load, readyState
     });
 
     xhr.open("POST", action, true);
-    xhr.setRequestHeader("password", document.getElementById("password").value);
+    xhr.setRequestHeader("password", (document.getElementById("password")! as HTMLInputElement).value);
     xhr.send(formData);
 }

@@ -1,18 +1,18 @@
 import "../css/global.css"
 
-let login = document.getElementById("login");
-let password = document.getElementById("password");
-let submit = document.getElementById("submit");
-let error = document.getElementById("error");
+let login = document.getElementById("login")!;
+let password = document.getElementById("password")! as HTMLInputElement;
+let submit = document.getElementById("submit")!;
+let error = document.getElementById("error")!;
 
-let content = document.getElementById("content");
-let logbox = document.getElementById("logbox");
+let content = document.getElementById("content")!;
+let logbox = document.getElementById("logbox")!;
 
-function updateLogs(lastUpdate) {
+function updateLogs(lastUpdate:number) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/admin/logs", true);
     xhr.setRequestHeader("password", password.value);
-    xhr.setRequestHeader("minimumtime", lastUpdate);
+    xhr.setRequestHeader("minimumtime", lastUpdate.toString());
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
 

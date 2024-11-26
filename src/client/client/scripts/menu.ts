@@ -1,25 +1,25 @@
 import { config, sendData } from "./networking";
 
 export const stopLoading = () => {
-    document.getElementById("loading").classList.add("hidden");
-    document.getElementById("content").classList.remove("hidden");
+    document.getElementById("loading")?.classList.add("hidden");
+    document.getElementById("content")?.classList.remove("hidden");
 }
 
 export const setupMenu = () => {
     if (!config.requirePassword) {
-        document.getElementById("passwordbox").classList.add("hidden");
+        document.getElementById("passwordbox")?.classList.add("hidden");
     }
 }
 
 export const startFormListener = () => {
-    let form = document.getElementById("form");
+    let form = document.getElementById("form")! as any as HTMLFormElement;
     let xhr;
 
     document.getElementsByTagName("body")[0].addEventListener("keypress", e => {
-        if(e.key == "Enter") document.getElementById("submitbutton").click();
+        if(e.key == "Enter") document.getElementById("submitbutton")?.click();
     });
 
-    document.getElementById("submitbutton").onclick = () => {
+    document.getElementById("submitbutton")!.onclick = () => {
         let formData = new FormData(form);
         console.log(formData.get("expirylength"));
         let action = "/api/upload";
@@ -28,14 +28,14 @@ export const startFormListener = () => {
         return false;
     }
 
-    let progressbox = document.getElementById("progressbox");
-    let progressbar = document.getElementById("progressbar");
-    let progressinfo = document.getElementById("progressinfo");
+    let progressbox = document.getElementById("progressbox")!;
+    let progressbar = document.getElementById("progressbar")! as HTMLProgressElement;
+    let progressinfo = document.getElementById("progressinfo")!;
 
-    let loading = document.getElementById("loading");
-    let content = document.getElementById("content");
+    let loading = document.getElementById("loading")!;
+    let content = document.getElementById("content")!;
 
-    let results = document.getElementById("results");
+    let results = document.getElementById("results")!;
 
     let dpsc;
     let last = 0;
