@@ -5,42 +5,45 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <h1>Filecan</h1>
-        <div id="loading">
-            <img class="center" src="./img/loading.gif"></img>
-        </div>
-        <div id="content" class="hidden">
-            <div class="paragraph">
-                <form action="javascript:void(0)" enctype="multipart/form-data" id="form">
-                    <input type="file" id="files" name="files" multiple>
-                    <div id="passwordbox">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password">
-                    </div>
-                    <br>
-                    <div>
-                        <label for="expirylength">Expiry: </label>
-                        <select name="expirylength" id="expirylength">
-                            <option value="3600000">1 Hour</option>
-                            <option value="86400000">1 Day</option>
-                            <option value="604800000">1 Week</option>
-                            <option value="2592000000">1 Month</option>
-                            <option value="31536000000">1 Year</option>
-                            <option value="-1">Never</option>
-                        </select>
-                    </div>
-                    <div id="errorbox" class="hidden">
-                        <p id="error"></p>
-                    </div>
-                    <input type="button" value="Submit" id="submitbutton">
-                    <div id="progressbox" class="hidden">
-                        <progress id="progressbar" value="0" max="100"></progress>
-                        <p id="progressinfo"></p>
-                    </div>
-                </form>
+        <div class="content">
+            <h1 class="title">Filecan</h1>
+            <div id="loading">
+                <img class="center" src="./img/loading.gif"></img>
             </div>
-        </div>
-        <div id="results" class="paragraph hidden">
+            <div id="content" class="hidden">
+                <div class="paragraph">
+                    <form action="javascript:void(0)" enctype="multipart/form-data" id="form">
+                        <input type="file" id="files" name="files" multiple>
+                        <div id="passwordbox">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password">
+                        </div>
+                        <br>
+                        <div>
+                            <label for="expirylength">Expiry: </label>
+                            <select name="expirylength" id="expirylength">
+                                <option value="3600000">1 Hour</option>
+                                <option value="86400000">1 Day</option>
+                                <option value="604800000">1 Week</option>
+                                <option value="2592000000">1 Month</option>
+                                <option value="31536000000">1 Year</option>
+                                <option value="-1">Never</option>
+                            </select>
+                        </div>
+                        <div id="errorbox" class="hidden">
+                            <p id="error"></p>
+                        </div>
+                        <input type="button" value="Upload" id="submitbutton" class="big">
+                        <div id="progressbox" class="hidden">
+                            <progress id="progressbar" value="0" max="100"></progress>
+                            <p id="progressinfo"></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="results" class="paragraph hidden">
+                <p><a href="/">Return</a></p>
+            </div>
         </div>
     </body>
 </html>

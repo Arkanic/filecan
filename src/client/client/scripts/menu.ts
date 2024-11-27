@@ -75,21 +75,26 @@ export const startFormListener = () => {
         loading.classList.add("hidden");
         results.classList.remove("hidden");
         if(json.success) {
+            let resultsdiv = document.createElement("div");
+            resultsdiv.classList.add("border");
+
             for(let i in json.files) {
                 let itemdiv = document.createElement("div");
+                itemdiv.classList.add("item-box");
+
                 let filename = document.createElement("p");
-                filename.appendChild(document.createTextNode(json.files[i].originalname));
+                filename.appendChild(document.createTextNode(`${json.files[i].originalname}: `));
                 let link = `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
-                let linkParentElement = document.createElement("p");
                 let linkElement = document.createElement("a");
                 linkElement.target = "_blank";
                 linkElement.href = link;
                 linkElement.appendChild(document.createTextNode(link));
-                linkParentElement.appendChild(linkElement);
+                filename.appendChild(linkElement);
                 itemdiv.appendChild(filename);
-                itemdiv.appendChild(linkParentElement);
-                results.appendChild(itemdiv);
+                resultsdiv.appendChild(itemdiv);
             }
+
+            results.appendChild(resultsdiv);
         } else {
             let error = document.createElement("p");
             error.appendChild(document.createTextNode(json.message));
