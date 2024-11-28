@@ -9,6 +9,7 @@ import {storage, fileFilter} from "./middleware/multerconf";
 import auth from "./middleware/auth";
 import config from "./config";
 import WebConfig from "../shared/types/webconfig";
+import FileMetadata from "../shared/types/filemetadata"
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -51,8 +52,14 @@ database().then(db => {
 
         try {
             let {files} = req;
+            let serializedFiles:Array<FileMetadata> = [];
+
             for(let i in files) {
                 let file:Express.Multer.File = (files as unknown as any)[i];
+                serializedFiles.push({
+                    originalname: file.originalname,
+                    filename: file.filename
+                });
 
                 await dbc.insert("files", {
                     created: Date.now(),
@@ -68,10 +75,10 @@ database().then(db => {
             res.status(201).json({
                 success: true,
                 message: "File uploaded successfully",
-                files: req.files
+                files: serializedFiles
             });
-            for (let i in req.files) {
-                let file = (files as unknown as any)[i] as unknown as any;
+            for (let i in serializedFiles) {
+                let file = serializedFiles[i];
                 logger.log(`upload ${getIP(req)} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return next();
@@ -116,7 +123,7 @@ database().then(db => {
             logger.log(`[serve] 404 ${getIP(req)} ${filename}`);
             return;
         }
-        res.status(200).sendFile(path.join(__dirname, "../", config.filecanDataPath, "files/", filename));
+        res.status(200).sendFile(path.join(__dirname, "../../", config.filecanDataPath, "files/", filename));
         logger.log(`[serve] 200 ${getIP(req)} ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);

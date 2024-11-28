@@ -1,4 +1,5 @@
 import "../css/global.css"
+import WebLogs from "../../shared/types/weblogs";
 
 let login = document.getElementById("login")!;
 let password = document.getElementById("password")! as HTMLInputElement;
@@ -16,14 +17,8 @@ function updateLogs(lastUpdate:number) {
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
 
-        let response = JSON.parse(xhr.responseText);
-        if(xhr.status != 200) {
-            if(xhr.status == 400 || xhr.status == 401) {
-                return error.innerHTML = response.message;
-            } else {
-                return error.innerHTML = "Unknown network error!";
-            }
-        }
+        let response = JSON.parse(xhr.responseText) as WebLogs;
+        if(!response.success) return error.innerHTML = response.message;
 
         let logs = response.logs;
         for(let i in logs) {

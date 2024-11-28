@@ -1,4 +1,5 @@
 import {config, sendData, XHREvent} from "./networking";
+import WebUpload from "../../../shared/types/webupload";
 
 const elements = {
     body: document.getElementsByTagName("body")[0]! as HTMLBodyElement,
@@ -72,10 +73,13 @@ export const startFormListener = () => {
 
     function readyStateChange(e:XHREvent, xhr:XMLHttpRequest):void {
         if(xhr.readyState != 4) return;
-        let json = JSON.parse(xhr.responseText);
+        let json = JSON.parse(xhr.responseText) as WebUpload;
+
         elements.loading.classList.add("hidden");
         elements.results.classList.remove("hidden");
+
         if(json.success) {
+
             let resultsdiv = document.createElement("div");
             resultsdiv.classList.add("border");
 
