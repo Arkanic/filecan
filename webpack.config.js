@@ -13,8 +13,8 @@ module.exports = {
         ]
     },
     entry: {
-        index: "./src/client/client/index.js",
-        admin: "./src/client/admin/index.js"
+        index: "./src/client/client/index.ts",
+        admin: "./src/client/admin/index.ts"
     },
     output: {
         filename: "[name]/x.[contenthash].js",
@@ -25,17 +25,19 @@ module.exports = {
             chunks: "all"
         }
     },
+    resolve: {
+        extensions: [
+            ".ts", ".tsx",
+            ".js",
+            ".css"
+        ]
+    },
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.tsx?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env"]
-                    }
-                }
+                loader: "ts-loader"
             },
             {
                 test: /\.css$/,

@@ -1,29 +1,24 @@
 import "../css/global.css"
+import WebLogs from "../../shared/types/weblogs";
 
-let login = document.getElementById("login");
-let password = document.getElementById("password");
-let submit = document.getElementById("submit");
-let error = document.getElementById("error");
+let login = document.getElementById("login")!;
+let password = document.getElementById("password")! as HTMLInputElement;
+let submit = document.getElementById("submit")!;
+let error = document.getElementById("error")!;
 
-let content = document.getElementById("content");
-let logbox = document.getElementById("logbox");
+let content = document.getElementById("content")!;
+let logbox = document.getElementById("logbox")!;
 
-function updateLogs(lastUpdate) {
+function updateLogs(lastUpdate:number) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/admin/logs", true);
     xhr.setRequestHeader("password", password.value);
-    xhr.setRequestHeader("minimumtime", lastUpdate);
+    xhr.setRequestHeader("minimumtime", lastUpdate.toString());
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
 
-        let response = JSON.parse(xhr.responseText);
-        if(xhr.status != 200) {
-            if(xhr.status == 400 || xhr.status == 401) {
-                return error.innerHTML = response.message;
-            } else {
-                return error.innerHTML = "Unknown network error!";
-            }
-        }
+        let response = JSON.parse(xhr.responseText) as WebLogs;
+        if(!response.success) return error.innerHTML = response.message;
 
         let logs = response.logs;
         for(let i in logs) {

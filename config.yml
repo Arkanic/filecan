@@ -28,3 +28,11 @@ filecanDataPath: ./data
 
 # Path that static web files are located for hosting
 staticFilesPath: ./dist
+
+# Should filecan host uploaded files? Can be set to false if you plan on using something like nginx
+# to host the static files found in data/files. in a location other than where the client is served.
+hostStaticFiles: true
+
+# override what the "link" should be set to when displaying uploaded files. Intended to be used in
+# conjunction with hostStaticFiles. ^s is replaced with the file id, i.e. "n9bem0.mp4"
+# customURLPath: https://example.com/^s
