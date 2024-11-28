@@ -11,14 +11,13 @@ export interface Config {
     adminPassword:string;
 
     port:string | number;
-
     reverseProxy:boolean;
 
     maxFilesizeMegabytes:number;
-
     filecanDataPath:string;
-
     staticFilesPath:string;
+    hostStaticFiles:boolean;
+    customURLPath?:string;
 }
 
 /**
@@ -31,10 +30,14 @@ export function getConfig(path?:string):Config {
     let configurationPath = path ? path : "./config.yml";
     if(!fs.existsSync(configurationPath)) throw new Error("Configuration file not found!");
 
-    let rawConfig = yaml.parse(fs.readFileSync(configurationPath).toString());
+    const rawConfig = yaml.parse(fs.readFileSync(configurationPath).toString());
+    const config = rawConfig as any as Config;
+
+    if(!config.hostStaticFiles && !config.customURLPath) console.warn("Filecan is configured not to serve uploaded files, but no file URL has been served. Is this intentional?");
+    if(config.hostStaticFiles && config.customURLPath) console.warn("Filecan is configured to link to a different path with the uploaded files, but is also configured to host files on the client address. Is this intentional?");
 
     // TODO: proper type checking?
-    return rawConfig as any as Config;
+    return config;
 }
 
 const config = getConfig();

@@ -86,7 +86,7 @@ export const startFormListener = () => {
                 let filename = document.createElement("p");
                 filename.appendChild(document.createTextNode(`${json.files[i].originalname}: `));
 
-                let link = `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
+                let link = config.customURLPath ? config.customURLPath.replace("^s", json.files[0].filename) : `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
                 let linkElement = document.createElement("a");
                 linkElement.target = "_blank";
                 linkElement.href = link;

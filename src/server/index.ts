@@ -8,6 +8,7 @@ import {getIP} from "./ip";
 import {storage, fileFilter} from "./middleware/multerconf";
 import auth from "./middleware/auth";
 import config from "./config";
+import WebConfig from "../shared/types/webconfig";
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -84,14 +85,18 @@ database().then(db => {
     });
 
     app.get("/api/config", (req, res) => {
-        return res.status(200).json({
-            requirePassword: config.requirePassword
-        });
+        let webconfig:WebConfig = {
+            requirePassword: config.requirePassword,
+            maxFilesizeMegabytes: config.maxFilesizeMegabytes
+        }
+        if(config.customURLPath) webconfig.customURLPath = config.customURLPath;
+
+        return res.status(200).json(webconfig);
     });
 
     app.post("/api/admin/logs", (req, res, next) => {
         auth(req, res, next, true);
-    }, async (req, res, next) => {
+    }, async (req, res) => {
         let logs;
         if(req.body)
             if(req.body.hasOwnProperty("minimumtime")) logs = await db("log").where("time", ">", parseInt(req.body.minimumtime));
@@ -103,7 +108,7 @@ database().then(db => {
         });
     });
 
-    app.get("*", async (req, res) => {
+    if(config.hostStaticFiles) app.get("*", async (req, res) => {
         let filename = path.basename(req.path);
 
         if(!fs.existsSync(path.join(config.filecanDataPath, "files/", filename))) {

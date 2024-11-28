@@ -8,7 +8,7 @@
     "client-build": "webpack --config webpack.config.js --progress && cp -r public dist/root/",
     "server-build": "tsc",
     "build": "npm run client-build && npm run server-build",
-    "start": "node ./build/index.js",
+    "start": "node ./build/server/index.js",
     "quick": "npm run build && npm run start"
   },
   "repository": {

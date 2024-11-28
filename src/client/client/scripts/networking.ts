@@ -1,4 +1,6 @@
-export let config;
+import WebConfig from "../../../shared/types/webconfig";
+
+export let config:WebConfig;
 
 export const getConfig = new Promise<void>(resolve => {
     let xhr = new XMLHttpRequest();
@@ -6,7 +8,7 @@ export const getConfig = new Promise<void>(resolve => {
         if(xhr.readyState != 4) return;
         if(xhr.status == 200) {
             try {
-                config = JSON.parse(xhr.responseText);
+                config = JSON.parse(xhr.responseText) as WebConfig;
             } catch(e) {
                 console.log(xhr.responseText);
                 throw e;
