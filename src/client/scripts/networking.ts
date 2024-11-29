@@ -4,7 +4,9 @@ import WebResponse, {WebSuccess} from "../../shared/types/webresponse";
 export let config:WebConfigSuccess;
 
 export const getConfig = new Promise<void>(async (resolve) => {
-    config = await makeAPICall<WebConfigSuccess>("/api/config");
+    let response = await makeAPICall<WebConfigSuccess>("/api/config");
+    if(!response.success) throw new Error("Get config fail!");
+    config = response;
     resolve();
 });
 
@@ -17,7 +19,7 @@ export const getConfig = new Promise<void>(async (resolve) => {
  * @param customXHR if specified api call will use this xhr object for request. Intended use is so that code that needs to hook into events like progress and loadStart can use the same generic method.
  * @returns Typed information on success, void on failure with blocking alert() call beforehand
  */
-export function makeAPICall<T extends WebSuccess>(path:string, password?:string, data?:FormData | {[unit:string]:any}, customXHR?:XMLHttpRequest):Promise<T> {
+export function makeAPICall<T extends WebSuccess>(path:string, password?:string, data?:FormData | {[unit:string]:any}, customXHR?:XMLHttpRequest):Promise<WebResponse<T>> {
     return new Promise((resolve, reject) => {
         let xhr = customXHR ? customXHR : new XMLHttpRequest();
         xhr.open("POST", path, true);
@@ -28,11 +30,6 @@ export function makeAPICall<T extends WebSuccess>(path:string, password?:string,
             if(xhr.readyState != 4) return;
 
             let response = JSON.parse(xhr.responseText) as WebResponse<T>;
-            if(!response.success || xhr.status != 200) {
-                // TODO: better error message display
-                throw new Error(`web error: ${response.message}`);
-            }
-
             resolve(response);
         });
 

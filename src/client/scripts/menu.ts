@@ -19,15 +19,16 @@ export function setupUI() {
     }
 
     elements.adminsubmit.addEventListener("click", async () => {
-        try {
-            logsLastUpdate = await updateLogs(0); // init
-        } catch(err) { // user got password wrong
+        let firstUpdateLogsResponse = await updateLogs(0); // init
+        if(firstUpdateLogsResponse == -1) {
             elements.adminpassword.classList.add("angry");
             setTimeout(() => {
                 elements.adminpassword.classList.remove("angry");
             }, 1000);
             return;
         }
+
+        logsLastUpdate = firstUpdateLogsResponse;
 
         elements.adminlogin.classList.add("hidden");
         elements.admincontent.classList.remove("hidden");
@@ -70,13 +71,13 @@ export function setupUI() {
         xhr.upload.addEventListener("progress", progress);
         xhr.upload.addEventListener("load", load);
 
-        let response:WebUploadSuccess;
-        try {
-            response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
-        } catch(err) {
-            elements.adminpassword.classList.add("angry");
+        let response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
+        if(!response.success) {
+            elements.loading.classList.add("hidden");
+            elements.content.classList.remove("hidden");
+            elements.password.classList.add("angry");
             setTimeout(() => {
-                elements.adminpassword.classList.remove("angry");
+                elements.password.classList.remove("angry");
             }, 1000);
             return;
         }
@@ -149,6 +150,7 @@ export function setupUI() {
 
 async function getUploadedFiles() {
     let response = await makeAPICall<WebFileSuccess>("/api/admin/files", elements.adminpassword.value);
+    if(!response.success) throw new Error("failed to get uploaded files");
     const {files} = response;
     for(let i in files) {
         let file = files[i];
@@ -175,6 +177,7 @@ async function getUploadedFiles() {
 
 async function updateLogs(lastUpdate:number):Promise<number> {
     let response = await makeAPICall<WebLogsSuccess>("/api/admin/logs", elements.adminpassword.value, {minimumtime: lastUpdate});
+    if(!response.success) return -1;
     const {logs} = response;
     for(let i in logs) {
         let log = logs[i];
