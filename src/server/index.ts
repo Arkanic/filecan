@@ -9,7 +9,8 @@ import {storage, fileFilter} from "./middleware/multerconf";
 import auth from "./middleware/auth";
 import config from "./config";
 import WebConfig from "../shared/types/webconfig";
-import FileMetadata from "../shared/types/filemetadata"
+import FileMetadata from "../shared/types/filemetadata";
+import {WebFile} from "../shared/types/webfiles";
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -31,7 +32,6 @@ database().then(db => {
             next();
         }
     ]);
-
     app.use("admin", express.static(path.join(config.staticFilesPath, "index")));
 
     const upload = multer({
@@ -112,6 +112,33 @@ database().then(db => {
         res.status(200).json({
             success: true,
             logs: logs.map(x => {return {time: x.time, author: x.author, color: x.color, content: x.content}})
+        });
+    });
+
+    app.post("/api/admin/files", (req, res, next) => {
+        auth(req, res, next, true);
+    }, async (req, res) => {
+        let files = await db("files").select("*");
+
+        let serializedFiles:Array<WebFile> = [];
+        for(let i in files) {
+            let file = files[i];
+
+            serializedFiles.push({
+                created: file.created,
+                expires: file.expires,
+                file: {
+                    originalname: file.original_filename,
+                    filename: file.filename
+                },
+                filesize: file.filesize,
+                views: file.views
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            files:serializedFiles
         });
     });
 

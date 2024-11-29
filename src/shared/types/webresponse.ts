@@ -2,7 +2,7 @@
 
 interface PureWebResponse {
     success:boolean;
-    message:string;
+    message?:string;
 }
 
 export interface WebSuccess extends PureWebResponse {
@@ -11,6 +11,7 @@ export interface WebSuccess extends PureWebResponse {
 
 export interface WebError extends PureWebResponse {
     success:false;
+    message:string;
 }
 
 type WebResponse<T extends WebSuccess> = T | WebError;
