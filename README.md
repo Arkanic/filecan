@@ -1,29 +1,44 @@
 # Filecan
-node.js file hoster
-## Insallation
+Node.js temporary file hosting service - simple to use, simple to setup, and simple to configure.
+
+## Features
+- No-nonsense web interface for uploading files
+- Default setup is 30 seconds of configuration away from being ready to host
+- Files are served without any extra steps, can be configured to run host files in an alternate location or through a different service like nginx
+- Admin panel for remotely checking on the status of filecan and managing files
+- Password protection, uploading UI can be exposed to wider web
+- Server provides one-command-to-update to the latest version
+
+Upload UI | Admin UI
+--- | ---
+ ![image](https://github.com/user-attachments/assets/03b845af-23a7-4d6d-b283-81cb65e93ec3) | ![image](https://github.com/user-attachments/assets/d045eb72-83fc-4cf6-b174-1f1a67b86c46)
+
+
+## Installation
 Make sure you have the latest version of node and npm installed on the machine you want to use as your server (https://nodejs.org).
 
-Download or clone the repository onto the machine, then open your terminal inside of the filecan folder.
+Create a folder where you would like to install filecan, and run the following command in a terminal inside of it:
 
-Run the command `npm i` to install the required packages.
+`curl -o- https://raw.githubusercontent.com/Arkanic/filecan/refs/heads/main/tools/filecan.sh | bash`
 
-Once that is done build code, using the command `npm run build`.
+This will download filecan and the required files into your chosen folder. The script will make changes inside of the folder, and will not tamper with your system.
 
-Then, to start the server, run the command `npm run start`.
+From there getting filecan to start is as simple as running `filecan.sh`! Visit `127.0.0.1:8080` to use filecan.
 
-Look into the config file for options to change how the server works.
+You will want to configure a few things before exposing filecan to the internet, have a look at `config.yml` for options. You will want to enable a upload password.
 
-If you want your server to be public to the internet, you need to port forward the port "8080", or the port that you have specified in the configuration file.
+### Changing passwords
+By default the upload password is disabled, and the admin password is "test". Obviously this is less than secure and you will want to change this before using filecan.
+
+Passwords in filecan are stored in configuration as one-way hashes using bcrypt. Conveniently there is a small script provided to generate these hashes for you.
+
+enter the "tools" folder, and open a terminal inside of it. Run the command `node genpassword.js <your password>`, replacing `<your password>` with the password you want to use. The script will spit out the password hash. You can now copy this into configuration, replacing the user or admin password as you see fit.
 
 ## Usage
-The default password for the server is "test".
+Filecan works best reverse proxied through nginx or similar. Using alternate server software to host the uploaded files is extremely viable and easy to do, all you need to is host the "files" folder inside of your data directory. This can work well if you don't want to expose the UI to the internet, as you can access the upload UI through your private network while hosting the files in an alternate manner. Filecan will manage the uploading/deletion of the files in the background.
 
-### How to change the password
-find the "tools" folder inside the code (the folder is in the same directory as `index.js`), and open the terminal inside of it.
-
-Run the command `node genpassword.js <your password>`, replacing `<your password>` with the password you want to use. This script will hash the password into a one-way function, so that it is unreadable. Replace the password parameter in config.yml with the random string the script spat out, using your favorite text editor.
-
-You should now be able to run the server as normal, with the new password being the one that works.
+### Updating
+Every so often the server software can be updated using ./update.sh, which will automatically download the latest release.
 
 ## Credits
 [https://github.com/Arkanic](Arkanic)
