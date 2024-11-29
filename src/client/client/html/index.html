@@ -7,6 +7,7 @@
     <body>
         <div class="content">
             <h1 class="title">Filecan</h1>
+            <h6><a href="#" id="adminopen">admin</a></h6>
             <div id="loading">
                 <img class="center" src="./img/loading.gif"></img>
             </div>
@@ -43,6 +44,20 @@
             </div>
             <div id="results" class="paragraph hidden">
                 <p><a href="/">Return</a></p>
+            </div>
+            <div id="adminlogin" class="hidden">
+                <div class="paragraph">
+                    <input type="password" id="adminpassword"/>
+                    <input type="button" id="adminsubmit" value="Log in"/>
+                    <h6><a href="#" id="contentopen">Return</a></h6>
+                </div>
+            </div>
+            <div id="admincontent" class="hidden">
+                <h1 class="title">Admin</h1>
+                <p>Uploaded files:</p>
+                <div id="adminfilesbox" class="border"></div>
+                <h4>Recent logs:</h4>
+                <div id="adminlogbox" class="logbox"></div>
             </div>
         </div>
     </body>
