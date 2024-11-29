@@ -24,6 +24,7 @@ database().then(db => {
 
     app.use([
         require("cors")(),
+        express.json(),
         express.static(config.staticFilesPath),
         (req:express.Request, res:express.Response, next:express.NextFunction) => {
             res.locals.db = db;
@@ -104,9 +105,9 @@ database().then(db => {
         auth(req, res, next, true);
     }, async (req, res) => {
         let logs;
-        if(req.body)
-            if(req.body.hasOwnProperty("minimumtime")) logs = await db("log").where("time", ">", parseInt(req.body.minimumtime));
-            else logs = await db("log").select("*");
+        if(req.body && req.body.hasOwnProperty("minimumtime")) {
+            logs = await db("log").where("time", ">", parseInt(req.body.minimumtime));
+        }
         else logs = await db("log").select("*");
         res.status(200).json({
             success: true,

@@ -165,7 +165,7 @@ function updateLogs(lastUpdate:number):number {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/admin/logs", true);
     xhr.setRequestHeader("password", elements.adminpassword.value);
-    xhr.setRequestHeader("minimumtime", lastUpdate.toString());
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = () => {
         if(xhr.readyState != 4) return;
 
@@ -185,7 +185,7 @@ function updateLogs(lastUpdate:number):number {
         elements.adminlogbox.scrollTop = elements.adminlogbox.scrollHeight;
     }
 
-    xhr.send();
+    xhr.send(JSON.stringify({minimumtime: lastUpdate.toString()}));
 
     return Date.now();
 }
