@@ -1,0 +1,21 @@
+name: Build Release Artifacts
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.JS
+        uses: actions/setup-node@v4.1.0
+      - name: Build package
+        run: ./ci/createpackage.sh
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: ./ciout/filecan.zip
