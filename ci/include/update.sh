@@ -5,4 +5,5 @@ wget https://github.com/Arkanic/filecan/releases/latest/download/filecan.zip
 echo "Extracting..."
 unzip -o filecan.zip
 rm filecan.zip
+./install.sh
 echo "Done!"
