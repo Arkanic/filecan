@@ -1,9 +1,9 @@
-import {WebSuccess, WebError} from "./webresponse";
+import WebResponse, {WebSuccess} from "./webresponse";
 import FileMetadata from "./filemetadata";
 
 interface WebUploadSuccess extends WebSuccess {
     files:Array<FileMetadata>;
 }
 
-type WebUpload = WebUploadSuccess | WebError;
+type WebUpload = WebResponse<WebUploadSuccess>;
 export default WebUpload;
