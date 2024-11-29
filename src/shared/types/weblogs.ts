@@ -1,4 +1,4 @@
-import {WebSuccess, WebError} from "./webresponse";
+import WebResponse, {WebSuccess} from "./webresponse";
 
 export interface WebLog {
     time:number;
@@ -11,5 +11,5 @@ export interface WebLogsSuccess extends WebSuccess {
     logs:Array<WebLog>;
 }
 
-type WebLogs = WebLogsSuccess | WebError;
+type WebLogs = WebResponse<WebLogsSuccess>;
 export default WebLogs;

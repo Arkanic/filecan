@@ -13,4 +13,5 @@ export interface WebError extends PureWebResponse {
     success:false;
 }
 
-export type WebResponse = WebSuccess | WebError;
+type WebResponse<T extends WebSuccess> = T | WebError;
+export default WebResponse;
