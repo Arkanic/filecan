@@ -29,7 +29,7 @@ function getUploadedFiles() {
             filediv.classList.add("item-box");
 
             let details = document.createElement("p");
-            details.appendChild(document.createTextNode(`${file.file.filename}: ${file.views} views, c: ${new Date(file.created).toString()} / e: ${new Date(file.expires).toString()}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb`));
+            details.appendChild(document.createTextNode(`${file.file.originalname}: ${file.views} views, c: ${new Date(file.created).toString()} / e: ${new Date(file.expires).toString()}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb`));
 
             filediv.appendChild(details);
             filesbox.appendChild(filediv);

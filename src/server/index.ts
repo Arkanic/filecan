@@ -61,12 +61,14 @@ database().then(db => {
                     filename: file.filename
                 });
 
+                let stat = fs.statSync(file.path);
+
                 await dbc.insert("files", {
                     created: Date.now(),
                     expires: (expiryLength > 0) ? Date.now() + expiryLength : 0, // if negative make it not expire
                     original_filename: file.originalname,
                     filename: file.filename,
-                    filesize: file.size,
+                    filesize: stat.size,
                     views: 0
                 });
                 fs.copyFileSync(file.path, path.join(config.filecanDataPath, "files/", file.filename));
