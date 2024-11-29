@@ -1,8 +1,9 @@
 import {config, sendData, XHREvent, makeAPICall} from "./networking";
 import elements from "./elements";
+import timeAgo from "./util/timeago";
 import WebUpload from "../../shared/types/webupload";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
-import WebFiles, {WebFileSuccess} from "../../shared/types/webfiles";
+import {WebFileSuccess} from "../../shared/types/webfiles";
 
 
 export const stopLoading = () => {
@@ -110,7 +111,7 @@ async function getUploadedFiles() {
         filediv.classList.add("item-box");
 
         let details = document.createElement("p");
-        details.appendChild(document.createTextNode(`${file.file.originalname}: ${file.views} views, c: ${new Date(file.created).toString()} / e: ${new Date(file.expires).toString()}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb`));
+        details.appendChild(document.createTextNode(`${file.file.originalname}: ${file.views} views, created ${timeAgo(file.created)} / expires ${timeAgo(file.expires)}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb`));
 
         filediv.appendChild(details);
         elements.adminfilesbox.appendChild(filediv);
