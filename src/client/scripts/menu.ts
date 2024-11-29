@@ -12,19 +12,29 @@ export function stopLoading() {
 }
 
 let logsLastUpdate = 0;
+let adminOpen = false;
 export function setupUI() {
     if (!config.requirePassword) {
         elements.passwordbox.classList.add("hidden");
     }
 
     elements.adminsubmit.addEventListener("click", async () => {
+        try {
+            logsLastUpdate = await updateLogs(0); // init
+        } catch(err) { // user got password wrong
+            elements.adminpassword.classList.add("angry");
+            setTimeout(() => {
+                elements.adminpassword.classList.remove("angry");
+            }, 1000);
+            return;
+        }
+
         elements.adminlogin.classList.add("hidden");
         elements.admincontent.classList.remove("hidden");
 
         setInterval(async () => {
             logsLastUpdate = await updateLogs(logsLastUpdate);
-        }, 1000 * 10); // 10 seconds
-        logsLastUpdate = await updateLogs(0); // init
+        }, 1000 * 10);
 
         getUploadedFiles();
     });
@@ -33,16 +43,19 @@ export function setupUI() {
         if(e.key == "Enter" && !elements.adminlogin.classList.contains("hidden")) elements.adminsubmit.click();
     });
 
-    elements.adminopen.addEventListener("click", () => {
-        if(!elements.adminlogin.classList.contains("hidden") || !elements.admincontent.classList.contains("hidden")) return;
-        elements.content.classList.add("hidden");
-        elements.results.classList.add("hidden");
-        elements.adminlogin.classList.remove("hidden");
-    });
+    elements.admintoggle.addEventListener("click", () => {
+        if(!adminOpen) {
+            elements.title.innerText = "Admin";
+            elements.content.classList.add("hidden");
+            elements.results.classList.add("hidden");
+            elements.adminlogin.classList.remove("hidden");
 
-    elements.contentopen.addEventListener("click", () => {
-        elements.adminlogin.classList.add("hidden");
-        elements.content.classList.remove("hidden");
+            elements.admintoggle.innerText = "Return";
+        } else {
+            window.location.reload();
+        }
+
+        adminOpen = !adminOpen;
     });
 
     elements.body.addEventListener("keypress", e => {
@@ -56,7 +69,17 @@ export function setupUI() {
         xhr.upload.addEventListener("loadstart", loadStart);
         xhr.upload.addEventListener("progress", progress);
         xhr.upload.addEventListener("load", load);
-        let response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
+
+        let response:WebUploadSuccess;
+        try {
+            response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
+        } catch(err) {
+            elements.adminpassword.classList.add("angry");
+            setTimeout(() => {
+                elements.adminpassword.classList.remove("angry");
+            }, 1000);
+            return;
+        }
 
         elements.loading.classList.add("hidden");
         elements.results.classList.remove("hidden");

@@ -28,10 +28,9 @@ export function makeAPICall<T extends WebSuccess>(path:string, password?:string,
             if(xhr.readyState != 4) return;
 
             let response = JSON.parse(xhr.responseText) as WebResponse<T>;
-            if(!response.success) {
+            if(!response.success || xhr.status != 200) {
                 // TODO: better error message display
-                alert(`web error: ${response.message}`);
-                return reject();
+                throw new Error(`web error: ${response.message}`);
             }
 
             resolve(response);

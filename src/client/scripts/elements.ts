@@ -1,5 +1,6 @@
 const elements = {
     body: document.getElementsByTagName("body")[0]! as HTMLBodyElement,
+    title: document.getElementById("title")!,
     loading: document.getElementById("loading")! as HTMLDivElement,
     content: document.getElementById("content")! as HTMLDivElement,
     results: document.getElementById("results")! as HTMLDivElement,
@@ -11,8 +12,7 @@ const elements = {
     progressbar: document.getElementById("progressbar")! as HTMLProgressElement,
     progressinfo: document.getElementById("progressinfo")! as HTMLParagraphElement,
 
-    adminopen: document.getElementById("adminopen")! as HTMLAnchorElement,
-    contentopen: document.getElementById("contentopen")! as HTMLAnchorElement,
+    admintoggle: document.getElementById("admintoggle")! as HTMLAnchorElement,
     adminlogin: document.getElementById("adminlogin")!,
     adminpassword: document.getElementById("adminpassword")! as HTMLInputElement,
     adminsubmit: document.getElementById("adminsubmit")! as HTMLInputElement,
