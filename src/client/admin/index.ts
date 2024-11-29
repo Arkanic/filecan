@@ -49,3 +49,7 @@ submit.addEventListener("click", () => {
     }, 1000 * 10); // 10 seconds
     lastUpdate = updateLogs(0); // init
 });
+
+password.addEventListener("keydown", e => {
+    if(e.code == "Enter") submit.click();
+});
