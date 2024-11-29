@@ -17,9 +17,11 @@ Upload UI | Admin UI
 ## Installation
 Make sure you have the latest version of node and npm installed on the machine you want to use as your server (https://nodejs.org).
 
-Create a folder where you would like to install filecan, and run the following command in a terminal inside of it:
+Create a folder where you would like to install filecan, and run the following command whilst inside it:
 
-`curl -o- https://raw.githubusercontent.com/Arkanic/filecan/refs/heads/main/tools/filecan.sh | bash`
+```sh
+curl -o- https://raw.githubusercontent.com/Arkanic/filecan/refs/heads/main/tools/filecan.sh | bash
+```
 
 This will download filecan and the required files into your chosen folder. The script will make changes inside of the folder, and will not tamper with your system.
 
