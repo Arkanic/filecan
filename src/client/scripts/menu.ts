@@ -1,7 +1,7 @@
 import {config, sendData, XHREvent} from "./networking";
-import WebUpload from "../../../shared/types/webupload";
-import WebLogs from "../../../shared/types/weblogs";
-import WebFiles from "../../../shared/types/webfiles";
+import WebUpload from "../../shared/types/webupload";
+import WebLogs from "../../shared/types/weblogs";
+import WebFiles from "../../shared/types/webfiles";
 
 const elements = {
     body: document.getElementsByTagName("body")[0]! as HTMLBodyElement,

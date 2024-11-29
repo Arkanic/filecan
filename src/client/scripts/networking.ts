@@ -1,4 +1,4 @@
-import WebConfig from "../../../shared/types/webconfig";
+import WebConfig from "../../shared/types/webconfig";
 
 export let config:WebConfig;
 

@@ -12,12 +12,9 @@ module.exports = {
             new TerserJSPlugin({})
         ]
     },
-    entry: {
-        index: "./src/client/client/index.ts",
-        admin: "./src/client/admin/index.ts"
-    },
+    entry:  "./src/client/index.ts",
     output: {
-        filename: "[name]/x.[contenthash].js",
+        filename: "x.[contenthash].js",
         path: path.resolve(__dirname, "dist")
     },
     optimization: {
@@ -55,14 +52,8 @@ module.exports = {
             filename: "x.[contenthash].css"
         }),
         new HtmlWebpackPlugin({
-            filename: "index/index.html",
-            template: "src/client/client/html/index.html",
-            chunks: ["index"]
-        }),
-        new HtmlWebpackPlugin({
-            filename: "admin/index.html",
-            template: "src/client/admin/html/index.html",
-            chunks: ["admin"]
+            filename: "index.html",
+            template: "src/client/html/index.html"
         }),
         new CleanWebpackPlugin()
     ]

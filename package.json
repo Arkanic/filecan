@@ -5,7 +5,7 @@
   "main": "src/server/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-build": "webpack --config webpack.config.js --progress && cp -r public dist/root/",
+    "client-build": "webpack --config webpack.config.js --progress && cp -r public dist/",
     "server-build": "tsc",
     "build": "npm run client-build && npm run server-build",
     "start": "node ./build/server/index.js",

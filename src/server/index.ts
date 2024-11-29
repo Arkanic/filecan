@@ -25,14 +25,11 @@ database().then(db => {
     app.use([
         require("cors")(),
         express.static(config.staticFilesPath),
-        express.static(path.join(config.staticFilesPath, "root/")),
-        express.static(path.join(config.staticFilesPath, "index/")),
         (req:express.Request, res:express.Response, next:express.NextFunction) => {
             res.locals.db = db;
             next();
         }
     ]);
-    app.use("admin", express.static(path.join(config.staticFilesPath, "index")));
 
     const upload = multer({
         storage,
