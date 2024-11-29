@@ -1,7 +1,7 @@
 import WebResponse, {WebSuccess} from "./webresponse";
 import FileMetadata from "./filemetadata";
 
-interface WebUploadSuccess extends WebSuccess {
+export interface WebUploadSuccess extends WebSuccess {
     files:Array<FileMetadata>;
 }
 

@@ -1,5 +1,5 @@
 import {getConfig, config} from "./scripts/networking";
-import {stopLoading, setupMenu, startFormListener} from "./scripts/menu";
+import {stopLoading, setupUI} from "./scripts/menu";
 
 import "./css/global.css"
 
@@ -7,7 +7,6 @@ Promise.all([
     getConfig
 ]).then(() => {
     console.log(config);
-    setupMenu();
+    setupUI();
     stopLoading();
-    startFormListener();
 });

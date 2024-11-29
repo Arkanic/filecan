@@ -1,33 +1,91 @@
-import {config, sendData, XHREvent, makeAPICall} from "./networking";
+import {config, makeAPICall} from "./networking";
 import elements from "./elements";
 import timeAgo from "./util/timeago";
-import WebUpload from "../../shared/types/webupload";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
+import {WebUploadSuccess} from "../../shared/types/webupload";
 
 
-export const stopLoading = () => {
+export function stopLoading() {
     elements.loading.classList.add("hidden");
     elements.content.classList.remove("hidden");
 }
 
-export const setupMenu = () => {
+let logsLastUpdate = 0;
+export function setupUI() {
     if (!config.requirePassword) {
         elements.passwordbox.classList.add("hidden");
     }
-}
 
-export const startFormListener = () => {
+    elements.adminsubmit.addEventListener("click", async () => {
+        elements.adminlogin.classList.add("hidden");
+        elements.admincontent.classList.remove("hidden");
+
+        setInterval(async () => {
+            logsLastUpdate = await updateLogs(logsLastUpdate);
+        }, 1000 * 10); // 10 seconds
+        logsLastUpdate = await updateLogs(0); // init
+
+        getUploadedFiles();
+    });
+
+    elements.adminpassword.addEventListener("keydown", e => {
+        if(e.key == "Enter" && !elements.adminlogin.classList.contains("hidden")) elements.adminsubmit.click();
+    });
+
+    elements.adminopen.addEventListener("click", () => {
+        if(!elements.adminlogin.classList.contains("hidden") || !elements.admincontent.classList.contains("hidden")) return;
+        elements.content.classList.add("hidden");
+        elements.results.classList.add("hidden");
+        elements.adminlogin.classList.remove("hidden");
+    });
+
+    elements.contentopen.addEventListener("click", () => {
+        elements.adminlogin.classList.add("hidden");
+        elements.content.classList.remove("hidden");
+    });
+
     elements.body.addEventListener("keypress", e => {
         if(e.key == "Enter" && !elements.content.classList.contains("hidden")) elements.submitbutton.click();
     });
 
-    document.getElementById("submitbutton")!.onclick = () => {
+    elements.submitbutton.addEventListener("click", async () => {
         let formData = new FormData(elements.form);
-        sendData(formData, elements.password.value, "/api/upload", loadStart, progress, load, readyStateChange);
 
-        return false;
-    }
+        let xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("loadstart", loadStart);
+        xhr.upload.addEventListener("progress", progress);
+        xhr.upload.addEventListener("load", load);
+        let response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
+
+        elements.loading.classList.add("hidden");
+        elements.results.classList.remove("hidden");
+
+        let resultsdiv = document.createElement("div");
+        resultsdiv.classList.add("border");
+
+        for(let i in response.files) {
+            let file = response.files[i];
+
+            let itemdiv = document.createElement("div");
+            itemdiv.classList.add("item-box");
+
+            let filename = document.createElement("p");
+            filename.appendChild(document.createTextNode(`${file.originalname}: `));
+
+            let link = config.customURLPath ? config.customURLPath.replace("^s", file.filename) : `${window.location.protocol}//${window.location.host}/${file.filename}`;
+            let linkElement = document.createElement("a");
+            linkElement.target = "_blank";
+            linkElement.href = link;
+            linkElement.appendChild(document.createTextNode(link));
+
+            filename.appendChild(linkElement);
+            itemdiv.appendChild(filename);
+            resultsdiv.appendChild(itemdiv);
+        }
+
+        elements.results.appendChild(resultsdiv);
+    });
 
     let intervalID;
     let last = 0;
@@ -35,6 +93,7 @@ export const startFormListener = () => {
     let dif:number;
 
     function loadStart(e:Event):void {
+        console.log("loadStart");
         elements.progressbox.classList.remove("hidden");
         intervalID = setInterval(() => {
             dif = now - last;
@@ -42,7 +101,8 @@ export const startFormListener = () => {
         }, 1000);
     }
 
-    function progress(e:XHREvent):void {
+    function progress(e):void {
+        console.log("progress");
         now = e.loaded;
         let progress = e.loaded / e.total * 100;
         elements.progressbar.value = progress;
@@ -55,49 +115,12 @@ export const startFormListener = () => {
         `;
     }
 
-    function load(e:XHREvent):void {
+    function load(e):void {
+        console.log("load");
         clearInterval(intervalID);
         elements.progressbox.classList.add("hidden");
         elements.content.classList.add("hidden");
         elements.loading.classList.remove("hidden");
-    }
-
-    function readyStateChange(e:XHREvent, xhr:XMLHttpRequest):void {
-        if(xhr.readyState != 4) return;
-        let json = JSON.parse(xhr.responseText) as WebUpload;
-
-        elements.loading.classList.add("hidden");
-        elements.results.classList.remove("hidden");
-
-        if(json.success) {
-
-            let resultsdiv = document.createElement("div");
-            resultsdiv.classList.add("border");
-
-            for(let i in json.files) {
-                let itemdiv = document.createElement("div");
-                itemdiv.classList.add("item-box");
-
-                let filename = document.createElement("p");
-                filename.appendChild(document.createTextNode(`${json.files[i].originalname}: `));
-
-                let link = config.customURLPath ? config.customURLPath.replace("^s", json.files[0].filename) : `${window.location.protocol}//${window.location.host}/${json.files[i].filename}`;
-                let linkElement = document.createElement("a");
-                linkElement.target = "_blank";
-                linkElement.href = link;
-                linkElement.appendChild(document.createTextNode(link));
-
-                filename.appendChild(linkElement);
-                itemdiv.appendChild(filename);
-                resultsdiv.appendChild(itemdiv);
-            }
-
-            elements.results.appendChild(resultsdiv);
-        } else {
-            let error = document.createElement("p");
-            error.appendChild(document.createTextNode(json.message));
-            elements.results.appendChild(error);
-        }
     }
 }
 
@@ -143,33 +166,3 @@ async function updateLogs(lastUpdate:number):Promise<number> {
 
     return Date.now();
 }
-
-let lastUpdate = 0;
-
-elements.adminsubmit.addEventListener("click", async () => {
-    elements.adminlogin.classList.add("hidden");
-    elements.admincontent.classList.remove("hidden");
-
-    setInterval(async () => {
-        lastUpdate = await updateLogs(lastUpdate);
-    }, 1000 * 10); // 10 seconds
-    lastUpdate = await updateLogs(0); // init
-
-    getUploadedFiles();
-});
-
-elements.adminpassword.addEventListener("keydown", e => {
-    if(e.key == "Enter" && !elements.adminlogin.classList.contains("hidden")) elements.adminsubmit.click();
-});
-
-elements.adminopen.addEventListener("click", () => {
-    if(!elements.adminlogin.classList.contains("hidden") || !elements.admincontent.classList.contains("hidden")) return;
-    elements.content.classList.add("hidden");
-    elements.results.classList.add("hidden");
-    elements.adminlogin.classList.remove("hidden");
-});
-
-elements.contentopen.addEventListener("click", () => {
-    elements.adminlogin.classList.add("hidden");
-    elements.content.classList.remove("hidden");
-});

@@ -2,13 +2,13 @@ import path from "path";
 import fs from "fs";
 import express from "express";
 import multer from "multer";
-import database, { DbConnection } from "./db";
+import database, {DbConnection} from "./db";
 import Logger from "./log";
 import {getIP} from "./ip";
 import {storage, fileFilter} from "./middleware/multerconf";
 import auth from "./middleware/auth";
 import config from "./config";
-import WebConfig from "../shared/types/webconfig";
+import {WebConfigSuccess} from "../shared/types/webconfig";
 import FileMetadata from "../shared/types/filemetadata";
 import {WebFile} from "../shared/types/webfiles";
 
@@ -91,8 +91,9 @@ database().then(db => {
         }
     });
 
-    app.get("/api/config", (req, res) => {
-        let webconfig:WebConfig = {
+    app.post("/api/config", (req, res) => {
+        let webconfig:WebConfigSuccess = {
+            success: true,
             requirePassword: config.requirePassword,
             maxFilesizeMegabytes: config.maxFilesizeMegabytes
         }
