@@ -1,4 +1,5 @@
 import WebConfig from "../../shared/types/webconfig";
+import WebResponse, {WebSuccess} from "../../shared/types/webresponse";
 
 export let config:WebConfig;
 
@@ -37,4 +38,29 @@ export function sendData(formData:FormData, password:string, action:string, load
     xhr.open("POST", action, true);
     xhr.setRequestHeader("password", password);
     xhr.send(formData);
+}
+
+export function makeAPICall<T extends WebSuccess>(path:string, password?:string, data?:{[unit:string]:any}):Promise<T> {
+    return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", path, true);
+        if(password) xhr.setRequestHeader("password", password);
+        if(data) xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.addEventListener("readystatechange", (e) => {
+            if(xhr.readyState != 4) return;
+
+            let response = JSON.parse(xhr.responseText) as WebResponse<T>;
+            if(!response.success) {
+                // TODO: better error message display
+                alert(`web error: ${response.message}`);
+                return reject();
+            }
+
+            resolve(response);
+        });
+
+        if(data) xhr.send(JSON.stringify(data));
+        else xhr.send();
+    });
 }
