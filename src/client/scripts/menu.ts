@@ -166,7 +166,7 @@ async function getUploadedFiles() {
         link.appendChild(document.createTextNode(`${file.file.originalname}`));
         details.appendChild(link);
 
-        details.appendChild(document.createTextNode(`: ${file.views} views, created ${timeAgo(file.created)} / expires ${timeAgo(file.expires)}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb   `));
+        details.appendChild(document.createTextNode(`: ${file.views} views, created ${timeAgo(file.created)} / expires ${(file.expires == 0) ? "never" : timeAgo(file.expires)}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb   `));
 
         let deleteButton = document.createElement("a");
         deleteButton.href = "#1";
