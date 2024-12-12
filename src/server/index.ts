@@ -79,7 +79,7 @@ database().then(db => {
             });
             for (let i in serializedFiles) {
                 let file = serializedFiles[i];
-                logger.log(`upload ${getIP(req)} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
+                logger.log(`[upload] ${getIP(req)} successfully uploaded "${file.originalname}" as "${file.filename}", expiry is ${(expiryLength < 0) ? "never" : "in " + (expiryLength / 60 / 60 / 1000).toFixed(1) + " hours"}`);
             }
             return next();
         } catch (error) {
@@ -141,6 +141,30 @@ database().then(db => {
             success: true,
             files:serializedFiles
         });
+    });
+
+    app.post("/api/admin/delete", (req, res, next) => {
+        auth(req, res, next, true);
+    }, async (req, res) => {
+        if(!req.body || (req.body && !req.body.filename)) return res.status(400).json({
+            success: false,
+            message: "Bad request"
+        });
+
+        let results = await db("files").where("filename", req.body.filename);
+        if(results.length < 1) return res.status(400).json({
+            success: false,
+            message: "File does not exist"
+        });
+
+        await db("files").del().where("filename", req.body.filename);
+        fs.unlinkSync(path.join(config.filecanDataPath, "files", req.body.filename));
+
+        res.status(200).json({
+            success: true
+        });
+
+        logger.log(`[admin] deleted ${req.body.filename}`);
     });
 
     if(config.hostStaticFiles) app.get("*", async (req, res) => {

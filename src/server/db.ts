@@ -5,7 +5,7 @@ import config from "./config";
 
 import {getMigration, getMigrations} from "./db/migrator";
 
-const VERSION = "3.0.0";
+const VERSION = "3.0.1";
 
 export default ():Promise<knex.Knex<any, unknown[]>> => {
     return new Promise((resolve, reject) => {

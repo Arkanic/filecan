@@ -4,6 +4,7 @@ import timeAgo from "./util/timeago";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
 import {WebUploadSuccess} from "../../shared/types/webupload";
+import {WebSuccess} from "../../shared/types/webresponse";
 
 
 export function stopLoading() {
@@ -159,7 +160,29 @@ async function getUploadedFiles() {
         filediv.classList.add("item-box");
 
         let details = document.createElement("p");
-        details.appendChild(document.createTextNode(`${file.file.originalname}: ${file.views} views, created ${timeAgo(file.created)} / expires ${timeAgo(file.expires)}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb`));
+
+        let link = document.createElement("a");
+        link.href = config.customURLPath ? config.customURLPath.replace("^s", file.file.filename) : `${window.location.protocol}//${window.location.host}/${file.file.filename}`;
+        link.appendChild(document.createTextNode(`${file.file.originalname}`));
+        details.appendChild(link);
+
+        details.appendChild(document.createTextNode(`: ${file.views} views, created ${timeAgo(file.created)} / expires ${timeAgo(file.expires)}, ${(file.filesize / 1000 / 1000).toFixed(2)}mb   `));
+
+        let deleteButton = document.createElement("a");
+        deleteButton.href = "#1";
+        deleteButton.appendChild(document.createTextNode("🗑"));
+        deleteButton.addEventListener("click", async () => {
+            if(deleteButton.href.endsWith("#1")) { // first click
+                deleteButton.href = "#";
+                deleteButton.innerHTML = "";
+                deleteButton.appendChild(document.createTextNode("Confirm"));
+            } else { // second click
+                await makeAPICall<WebSuccess>("/api/admin/delete", elements.adminpassword.value, {filename: file.file.filename});
+                filediv.remove();
+            }
+        });
+
+        details.appendChild(deleteButton);
 
         filediv.appendChild(details);
         elements.adminfilesbox.appendChild(filediv);

@@ -63,6 +63,11 @@ div.item-box p {
     padding: 3px;
 }
 
+div.item-box a.delete {
+    float: right;
+    height: 50%;
+}
+
 img.center {
     position: absolute;
     top: 0;
