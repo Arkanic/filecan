@@ -42,5 +42,8 @@ Filecan works best reverse proxied through nginx or similar. Using alternate ser
 ### Updating
 Every so often the server software can be updated using ./update.sh, which will automatically download the latest release.
 
+### Documentation
+[Further information can be found in the docs](./doc/README.md)
+
 ## Credits
 [https://github.com/Arkanic](Arkanic)
