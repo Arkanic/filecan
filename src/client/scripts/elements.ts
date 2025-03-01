@@ -19,7 +19,8 @@ const elements = {
 
     admincontent: document.getElementById("admincontent")!,
     adminfilesbox: document.getElementById("adminfilesbox")!,
-    adminlogbox: document.getElementById("adminlogbox")!
+    adminlogbox: document.getElementById("adminlogbox")!,
+    adminlogclear: document.getElementById("adminlogclear")! as HTMLAnchorElement
 }
 
 export default elements;

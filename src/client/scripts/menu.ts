@@ -3,7 +3,7 @@ import elements from "./elements";
 import timeAgo from "./util/timeago";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
-import {WebUploadSuccess} from "../../shared/types/webupload";
+import WebUpload, {WebUploadSuccess} from "../../shared/types/webupload";
 import {WebSuccess} from "../../shared/types/webresponse";
 
 
@@ -37,6 +37,10 @@ export function setupUI() {
         setInterval(async () => {
             logsLastUpdate = await updateLogs(logsLastUpdate);
         }, 1000 * 10);
+
+        elements.adminlogclear.addEventListener("click", async () => {
+            await makeAPICall<WebUploadSuccess>("/api/admin/deletelogs", elements.adminpassword.value, {timeoffset: 1000 * 60 * 60 * 24});
+        });
 
         getUploadedFiles();
     });

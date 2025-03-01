@@ -3,7 +3,7 @@ import fs from "fs";
 import express from "express";
 import multer from "multer";
 import database, {DbConnection} from "./db";
-import Logger from "./log";
+import Logger, {deleteLogs} from "./log";
 import {getIP} from "./ip";
 import {storage, fileFilter} from "./middleware/multerconf";
 import auth from "./middleware/auth";
@@ -108,11 +108,24 @@ database().then(db => {
         let logs;
         if(req.body && req.body.hasOwnProperty("minimumtime")) {
             logs = await db("log").where("time", ">", parseInt(req.body.minimumtime));
-        }
-        else logs = await db("log").select("*");
+        } else logs = await db("log").select("*");
         res.status(200).json({
             success: true,
             logs: logs.map(x => {return {time: x.time, author: x.author, color: x.color, content: x.content}})
+        });
+    });
+
+    app.post("/api/admin/deletelogs", (req, res, next) => {
+        auth(req, res, next, true);
+    }, async (req, res) => {
+        let timeoffset = 0;
+        if(req.body && req.body.hasOwnProperty("timeoffset")) timeoffset = parseInt(req.body.timeoffset);
+
+        await deleteLogs(db, timeoffset);
+        logger.log(`[admin] cleared all logs after ${new Date(Date.now() - timeoffset).toString()}`);
+
+        res.status(200).json({
+            success: true
         });
     });
 
