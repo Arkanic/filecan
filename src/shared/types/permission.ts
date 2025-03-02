@@ -4,5 +4,6 @@ enum Permission {
     Admin = 2,
     All = Upload | Admin
 }
-
 export default Permission;
+
+export type PermissionSet = number | Permission;

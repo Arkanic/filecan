@@ -1,6 +1,4 @@
-import Permission from "../shared/types/permission";
-
-export type PermissionSet = number | Permission;
+import Permission, {PermissionSet} from "../shared/types/permission";
 
 export function hasPermission(set:PermissionSet, permission:Permission):boolean {
     return (set & permission) > 0;

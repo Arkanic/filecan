@@ -1,6 +1,6 @@
 import randomString from "./util/genrandom";
 import SessionMetadata from "../shared/types/sessionmetadata";
-import {PermissionSet} from "./permissions";
+import {PermissionSet} from "../shared/types/permission";
 
 export class Session {
     token:string;
@@ -43,23 +43,27 @@ export class Session {
 
 export default class SessionManager {
     private sessions:{[unit:string]:{session:Session, timeout:NodeJS.Timeout}};
+    private sessionLifespan:number;
 
-    constructor() {
+    /**
+     * @param lifespan Number of milliseconds the session should live for
+     */
+    constructor(lifespan:number) {
         this.sessions = {};
+        this.sessionLifespan = lifespan;
     }
 
     /**
      * Adds an expiring session to the pool.
      * 
-     * @param lifespan Number of milliseconds the session should live for
      * @returns Token for use with api
      */
-    add(lifespan:number, permissions:PermissionSet):string {
+    add(permissions:PermissionSet):string {
         let token = randomString(64);
-        this.sessions[token].session = new Session(token, permissions, new Date(Date.now() + lifespan));
+        this.sessions[token].session = new Session(token, permissions, new Date(Date.now() + this.sessionLifespan));
         this.sessions[token].timeout = setTimeout(() => {
             this.revoke(token);
-        }, lifespan);
+        }, this.sessionLifespan);
 
         return token;
     }
