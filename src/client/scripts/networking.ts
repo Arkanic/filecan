@@ -24,14 +24,15 @@ export const getConfig = new Promise<void>(async (resolve) => {
  */
 export function makeAPICall<T extends WebSuccess>(path:string, authneeded:boolean, data?:FormData | {[unit:string]:any}, customXHR?:XMLHttpRequest):Promise<WebResponse<T>> {
     return new Promise((resolve, reject) => {
-        let tokenData = getToken();
+        let tokenData;
+        if(authneeded) tokenData = getToken();
         if(!tokenData && authneeded) reject();
         let token;
         if(authneeded) token = tokenData!.token;
 
         let xhr = customXHR ? customXHR : new XMLHttpRequest();
         xhr.open("POST", path, true);
-        if(token) xhr.setRequestHeader("token", token);
+        if(authneeded) xhr.setRequestHeader("token", token);
         if(!(data instanceof FormData)) xhr.setRequestHeader("Content-Type", "application/json");
 
         xhr.addEventListener("readystatechange", (e) => {
@@ -65,6 +66,7 @@ export function getToken():GetTokenResult | undefined {
         localStorage.removeItem("token");
         localStorage.removeItem("tokenExpiry");
         localStorage.removeItem("tokenPermissions");
+        localStorage.removeItem("tokenForInstanceHash");
 
         return;
     }
@@ -74,6 +76,7 @@ export function getToken():GetTokenResult | undefined {
         localStorage.removeItem("token");
         localStorage.removeItem("tokenExpiry");
         localStorage.removeItem("tokenPermissions");
+        localStorage.removeItem("tokenForInstanceHash");
 
         return;
     }
@@ -112,12 +115,14 @@ export function authenticateUpgradeToken(password:string, admin:boolean):Promise
                 localStorage.removeItem("token");
                 localStorage.removeItem("tokenExpiry");
                 localStorage.removeItem("tokenPermissions");
+                localStorage.removeItem("tokenForInstanceHash");
                 return resolve(false);
             }
 
             localStorage.setItem("token", response.token);
             localStorage.setItem("tokenExpiry", response.expires.toString());
             localStorage.setItem("tokenPermissions", tokenResult ? (tokenResult.permissions | response.grantedPermissions).toString() : response.grantedPermissions.toString());
+            localStorage.setItem("tokenForInstanceHash", config.instanceHash);
             resolve(true);
         });
         

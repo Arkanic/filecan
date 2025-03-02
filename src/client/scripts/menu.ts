@@ -71,8 +71,8 @@ export function setupUI() {
     });
 
     elements.submitbutton.addEventListener("click", async () => {
-        let result = await authenticateUpgradeToken(elements.password.value, false);
-        if(!result) {
+        let auth = await authenticateUpgradeToken(elements.password.value, false);
+        if(!auth) {
             elements.loading.classList.add("hidden");
             elements.content.classList.remove("hidden");
             elements.password.classList.add("angry");
