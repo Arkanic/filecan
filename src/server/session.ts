@@ -1,16 +1,19 @@
 import randomString from "./util/genrandom";
 import SessionMetadata from "../shared/types/sessionmetadata";
+import {PermissionSet} from "./permissions";
 
 export class Session {
     token:string;
     created:Date;
     expiry:Date;
     lastInteraction:Date | undefined;
+    permissions:PermissionSet;
 
-    constructor(token:string, expiry:Date) {
+    constructor(token:string, permissions:PermissionSet, expiry:Date) {
         this.token = token;
         this.created = new Date();
         this.expiry = expiry;
+        this.permissions = permissions;
     }
 
     /**
@@ -51,17 +54,17 @@ export default class SessionManager {
      * @param lifespan Number of milliseconds the session should live for
      * @returns Token for use with api
      */
-    add(lifespan:number):string {
+    add(lifespan:number, permissions:PermissionSet):string {
         let token = randomString(64);
-        this.sessions[token].session = new Session(token, new Date(Date.now() + lifespan));
+        this.sessions[token].session = new Session(token, permissions, new Date(Date.now() + lifespan));
         this.sessions[token].timeout = setTimeout(() => {
-            this.delete(token);
+            this.revoke(token);
         }, lifespan);
 
         return token;
     }
     
-    delete(token:string):boolean {
+    revoke(token:string):boolean {
         if(!this.get(token)) return false;
 
         clearInterval(this.sessions[token].timeout);
@@ -78,14 +81,20 @@ export default class SessionManager {
         return this.sessions[token].session;
     }
 
-    /**
-     * Check if a provided token exists. This method is intended for use via the web middleware,
-     * so using it will update the "last interacted" parameter inside the session.
-     */
-    isValid(token:string):boolean {
-        if(!this.sessions[token]) return false;
+    exists(token:string):boolean {
+        return this.sessions[token] ? true : false;
+    }
 
-        this.sessions[token].session.interactionObserved();
+    /**
+     * Add permissions to a pre-existing session
+     * @param permission a singular or set of permissions
+     * @returns success?
+     */
+    addPermission(token:string, permission:PermissionSet):boolean {
+        let session = this.get(token);
+        if(!session) return false;
+
+        session.permissions = session.permissions | permission;
         return true;
     }
 }
