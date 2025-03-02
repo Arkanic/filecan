@@ -48,7 +48,7 @@ database().then(db => {
     });
 
     app.post("/api/auth/authenticate", (req, res, next) => {
-        if((!req.body.type || !req.body.password) && !(typeof(req.body.type) == "string" && typeof(req.body.password) == "string")) return res.json({
+        if((!req.body.type || !req.body.password) && !(typeof(req.body.type) == "string" && typeof(req.body.password) == "string")) return res.status(400).json({
             success: false,
             message: "Invalid body format"
         });
@@ -58,7 +58,7 @@ database().then(db => {
         let requestedPermission = Permission.None;
         if(body.type == "upload") requestedPermission = Permission.Upload;
         else if(body.type == "admin") requestedPermission = Permission.Admin;
-        else return res.json({
+        else return res.status(400).json({
             success: false,
             message: "Invalid body format"
         });
@@ -67,7 +67,7 @@ database().then(db => {
         let grantedPermission = Permission.None;
         if(hasPermission(requestedPermission, Permission.Upload) && config.requirePassword) {
             if(!bcrypt.compareSync(body.password, config.password)) {
-                res.json({
+                res.status(400).json({
                     success: false,
                     message: "Incorrect password"
                 });
@@ -79,7 +79,7 @@ database().then(db => {
             grantedPermission |= Permission.Upload;
         } else if(hasPermission(requestedPermission, Permission.Admin)) {
             if(!bcrypt.compareSync(body.password, config.adminPassword)) {
-                res.json({
+                res.status(400).json({
                     success: false,
                     message: "Incorrect password"
                 });
@@ -104,7 +104,7 @@ database().then(db => {
         session.permissions |= grantedPermission;
         session.interactionObserved();
 
-        res.json({
+        res.status(200).json({
             success: true,
             token: session.token,
             expires: session.expiry.getTime(),
@@ -113,7 +113,7 @@ database().then(db => {
     });
 
     app.post("/api/upload", (req, res, next) => {
-        auth(req, res, next, false);
+        auth(req, res, next, sessions, false);
     }, upload.any(), async (req, res, next) => {
         let expiryLength = 1000 * 60 * 60 * 24; // 24 hours
         if(req.body.expirylength)
@@ -175,7 +175,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/logs", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let logs;
         if(req.body && req.body.hasOwnProperty("minimumtime")) {
@@ -188,7 +188,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/deletelogs", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let timeoffset = 0;
         if(req.body && req.body.hasOwnProperty("timeoffset")) timeoffset = parseInt(req.body.timeoffset);
@@ -202,7 +202,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/files", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let files = await db("files").select("*");
 
@@ -229,7 +229,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/delete", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         if(!req.body || (req.body && !req.body.filename)) return res.status(400).json({
             success: false,
