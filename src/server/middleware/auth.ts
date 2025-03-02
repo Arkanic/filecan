@@ -9,6 +9,7 @@ export default function auth(req:express.Request, res:express.Response, next:exp
     let logger = new Logger(res.locals.db, "auth");
 
     if(!(req.headers.token && typeof(req.headers.token) == "string")) {
+        console.log(req.headers.token);
         logger.warn(`[auth fail] [malformed] ${getIP(req)} attempted access, malformed request`);
         return res.status(400).json({
             success: false,
@@ -25,6 +26,7 @@ export default function auth(req:express.Request, res:express.Response, next:exp
             message: "Invalid token"
         });
     }
+    session.interactionObserved();
 
     const permissions = session.permissions;
     if(admin) {

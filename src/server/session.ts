@@ -60,10 +60,10 @@ export default class SessionManager {
      */
     add(permissions:PermissionSet):string {
         let token = randomString(64);
-        this.sessions[token].session = new Session(token, permissions, new Date(Date.now() + this.sessionLifespan));
-        this.sessions[token].timeout = setTimeout(() => {
-            this.revoke(token);
-        }, this.sessionLifespan);
+        this.sessions[token] = {
+            session: new Session(token, permissions, new Date(Date.now() + this.sessionLifespan)),
+            timeout: setTimeout(() => {this.revoke(token)}, this.sessionLifespan)
+        }
 
         return token;
     }
