@@ -16,6 +16,9 @@ import {WebConfigSuccess} from "../shared/types/webconfig";
 import FileMetadata from "../shared/types/filemetadata";
 import {WebFile} from "../shared/types/webfiles";
 import AuthRequest from "../shared/types/request/authrequest";
+import randomString from "./util/genrandom";
+
+const instanceHash = randomString(32);
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -24,7 +27,7 @@ database().then(db => {
     logger.log("Starting filecan...");
     logger.log("Database loaded...");
 
-    const sessions = new SessionManager(1000 * 60 * 60 * 24 * 30); // 30 days
+    const sessions = new SessionManager(1000 * 60 * 60 * 24 * 7 * 2); // 2 weeks
 
     const app = express();
     app.set("trust proxy", true);
@@ -90,7 +93,7 @@ database().then(db => {
         }
 
         let session:Session;
-        if(req.body.session && typeof(req.body.session) == "string") {
+        if(req.body.token && typeof(req.body.token) == "string") {
             session = sessions.get(req.body.token);
             if(!session) return res.json({
                 success: false,
@@ -167,7 +170,8 @@ database().then(db => {
         let webconfig:WebConfigSuccess = {
             success: true,
             requirePassword: config.requirePassword,
-            maxFilesizeMegabytes: config.maxFilesizeMegabytes
+            maxFilesizeMegabytes: config.maxFilesizeMegabytes,
+            instanceHash
         }
         if(config.customURLPath) webconfig.customURLPath = config.customURLPath;
 

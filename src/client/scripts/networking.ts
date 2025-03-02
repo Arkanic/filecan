@@ -60,6 +60,14 @@ export interface GetTokenResult {
 export function getToken():GetTokenResult | undefined {
     let token = localStorage.getItem("token");
     if(!token) return;
+
+    if(localStorage.getItem("tokenForInstanceHash") != config.instanceHash) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiry");
+        localStorage.removeItem("tokenPermissions");
+
+        return;
+    }
     
     let expiry = parseInt(localStorage.getItem("tokenExpiry")!);
     if(expiry < Date.now()) {
@@ -100,11 +108,16 @@ export function authenticateUpgradeToken(password:string, admin:boolean):Promise
             if(xhr.readyState != 4) return;
 
             let response = JSON.parse(xhr.responseText) as WebResponse<WebAuthSuccess>;
-            if(!response.success) return resolve(false);
+            if(!response.success) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("tokenExpiry");
+                localStorage.removeItem("tokenPermissions");
+                return resolve(false);
+            }
 
             localStorage.setItem("token", response.token);
             localStorage.setItem("tokenExpiry", response.expires.toString());
-            localStorage.setItem("tokenPermissions", response.grantedPermissions.toString());
+            localStorage.setItem("tokenPermissions", tokenResult ? (tokenResult.permissions | response.grantedPermissions).toString() : response.grantedPermissions.toString());
             resolve(true);
         });
         
