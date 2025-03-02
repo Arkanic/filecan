@@ -1,4 +1,4 @@
-import {config, makeAPICall} from "./networking";
+import {config, makeAPICall, authenticateUpgradeToken} from "./networking";
 import elements from "./elements";
 import timeAgo from "./util/timeago";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
@@ -20,14 +20,16 @@ export function setupUI() {
     }
 
     elements.adminsubmit.addEventListener("click", async () => {
-        let firstUpdateLogsResponse = await updateLogs(0); // init
-        if(firstUpdateLogsResponse == -1) {
+        let result = await authenticateUpgradeToken(elements.adminpassword.value, true);
+        if(!result) {
             elements.adminpassword.classList.add("angry");
             setTimeout(() => {
                 elements.adminpassword.classList.remove("angry");
             }, 1000);
             return;
         }
+
+        let firstUpdateLogsResponse = await updateLogs(0); // init
 
         logsLastUpdate = firstUpdateLogsResponse;
 
@@ -39,7 +41,7 @@ export function setupUI() {
         }, 1000 * 10);
 
         elements.adminlogclear.addEventListener("click", async () => {
-            await makeAPICall<WebUploadSuccess>("/api/admin/deletelogs", elements.adminpassword.value, {timeoffset: 1000 * 60 * 60 * 24});
+            await makeAPICall<WebUploadSuccess>("/api/admin/deletelogs", true, {timeoffset: 1000 * 60 * 60 * 24});
         });
 
         getUploadedFiles();
@@ -69,15 +71,8 @@ export function setupUI() {
     });
 
     elements.submitbutton.addEventListener("click", async () => {
-        let formData = new FormData(elements.form);
-
-        let xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener("loadstart", loadStart);
-        xhr.upload.addEventListener("progress", progress);
-        xhr.upload.addEventListener("load", load);
-
-        let response = await makeAPICall<WebUploadSuccess>("/api/upload", elements.password.value, formData, xhr);
-        if(!response.success) {
+        let auth = await authenticateUpgradeToken(elements.password.value, false);
+        if(!auth) {
             elements.loading.classList.add("hidden");
             elements.content.classList.remove("hidden");
             elements.password.classList.add("angry");
@@ -86,6 +81,16 @@ export function setupUI() {
             }, 1000);
             return;
         }
+
+        let formData = new FormData(elements.form);
+
+        let xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("loadstart", loadStart);
+        xhr.upload.addEventListener("progress", progress);
+        xhr.upload.addEventListener("load", load);
+
+        let response = await makeAPICall<WebUploadSuccess>("/api/upload", true, formData, xhr);
+        if(!response.success) return;
 
         elements.loading.classList.add("hidden");
         elements.results.classList.remove("hidden");
@@ -154,7 +159,7 @@ export function setupUI() {
 }
 
 async function getUploadedFiles() {
-    let response = await makeAPICall<WebFileSuccess>("/api/admin/files", elements.adminpassword.value);
+    let response = await makeAPICall<WebFileSuccess>("/api/admin/files", true);
     if(!response.success) throw new Error("failed to get uploaded files");
     const {files} = response;
     for(let i in files) {
@@ -181,7 +186,7 @@ async function getUploadedFiles() {
                 deleteButton.innerHTML = "";
                 deleteButton.appendChild(document.createTextNode("Confirm"));
             } else { // second click
-                await makeAPICall<WebSuccess>("/api/admin/delete", elements.adminpassword.value, {filename: file.file.filename});
+                await makeAPICall<WebSuccess>("/api/admin/delete", true, {filename: file.file.filename});
                 filediv.remove();
             }
         });
@@ -203,7 +208,7 @@ async function getUploadedFiles() {
 }
 
 async function updateLogs(lastUpdate:number):Promise<number> {
-    let response = await makeAPICall<WebLogsSuccess>("/api/admin/logs", elements.adminpassword.value, {minimumtime: lastUpdate});
+    let response = await makeAPICall<WebLogsSuccess>("/api/admin/logs", true, {minimumtime: lastUpdate});
     if(!response.success) return -1;
     const {logs} = response;
     for(let i in logs) {

@@ -2,7 +2,11 @@ import path from "path";
 import fs from "fs";
 import express from "express";
 import multer from "multer";
+import bcrypt from "bcrypt";
 import database, {DbConnection} from "./db";
+import SessionManager, {Session} from "./session";
+import {hasPermission} from "./permissions";
+import Permission from "../shared/types/permission";
 import Logger, {deleteLogs} from "./log";
 import {getIP} from "./ip";
 import {storage, fileFilter} from "./middleware/multerconf";
@@ -11,6 +15,10 @@ import config from "./config";
 import {WebConfigSuccess} from "../shared/types/webconfig";
 import FileMetadata from "../shared/types/filemetadata";
 import {WebFile} from "../shared/types/webfiles";
+import AuthRequest from "../shared/types/request/authrequest";
+import randomString from "./util/genrandom";
+
+const instanceHash = randomString(32);
 
 database().then(db => {
     let dbc = new DbConnection(db);
@@ -18,6 +26,8 @@ database().then(db => {
     const logger = new Logger(db, "main");
     logger.log("Starting filecan...");
     logger.log("Database loaded...");
+
+    const sessions = new SessionManager(1000 * 60 * 60 * 24 * 7 * 2); // 2 weeks
 
     const app = express();
     app.set("trust proxy", true);
@@ -40,8 +50,73 @@ database().then(db => {
         }
     });
 
+    app.post("/api/auth/authenticate", (req, res, next) => {
+        if((!req.body.type || !req.body.password) && !(typeof(req.body.type) == "string" && typeof(req.body.password) == "string")) return res.status(400).json({
+            success: false,
+            message: "Invalid body format"
+        });
+
+        const body:AuthRequest = req.body;
+
+        let requestedPermission = Permission.None;
+        if(body.type == "upload") requestedPermission = Permission.Upload;
+        else if(body.type == "admin") requestedPermission = Permission.Admin;
+        else return res.status(400).json({
+            success: false,
+            message: "Invalid body format"
+        });
+
+        // check password
+        let grantedPermission = Permission.None;
+        if(hasPermission(requestedPermission, Permission.Upload) && config.requirePassword) {
+            if(!bcrypt.compareSync(body.password, config.password)) {
+                res.status(400).json({
+                    success: false,
+                    message: "Incorrect password"
+                });
+                return logger.warn(`[auth fail] [fail] ${getIP(req)} attempted upload access, incorrect password`);
+            }
+
+            grantedPermission |= Permission.Upload;
+        } else if(hasPermission(requestedPermission, Permission.Upload) && !config.requirePassword) {
+            grantedPermission |= Permission.Upload;
+        } else if(hasPermission(requestedPermission, Permission.Admin)) {
+            if(!bcrypt.compareSync(body.password, config.adminPassword)) {
+                res.status(400).json({
+                    success: false,
+                    message: "Incorrect password"
+                });
+                return logger.warn(`[auth fail] [fail] ${getIP(req)} attempted admin access, incorrect password`);
+            }
+
+            grantedPermission |= Permission.Admin;
+        }
+
+        let session:Session;
+        if(req.body.token && typeof(req.body.token) == "string") {
+            session = sessions.get(req.body.token);
+            if(!session) return res.json({
+                success: false,
+                message: "Invalid token"
+            });
+        } else {
+            let token = sessions.add(Permission.None);
+            session = sessions.get(token) as Session;
+        }
+
+        session.permissions |= grantedPermission;
+        session.interactionObserved();
+
+        res.status(200).json({
+            success: true,
+            token: session.token,
+            expires: session.expiry.getTime(),
+            grantedPermissions: session.permissions
+        });
+    });
+
     app.post("/api/upload", (req, res, next) => {
-        auth(req, res, next, false);
+        auth(req, res, next, sessions, false);
     }, upload.any(), async (req, res, next) => {
         let expiryLength = 1000 * 60 * 60 * 24; // 24 hours
         if(req.body.expirylength)
@@ -95,7 +170,8 @@ database().then(db => {
         let webconfig:WebConfigSuccess = {
             success: true,
             requirePassword: config.requirePassword,
-            maxFilesizeMegabytes: config.maxFilesizeMegabytes
+            maxFilesizeMegabytes: config.maxFilesizeMegabytes,
+            instanceHash
         }
         if(config.customURLPath) webconfig.customURLPath = config.customURLPath;
 
@@ -103,7 +179,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/logs", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let logs;
         if(req.body && req.body.hasOwnProperty("minimumtime")) {
@@ -116,7 +192,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/deletelogs", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let timeoffset = 0;
         if(req.body && req.body.hasOwnProperty("timeoffset")) timeoffset = parseInt(req.body.timeoffset);
@@ -130,7 +206,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/files", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         let files = await db("files").select("*");
 
@@ -157,7 +233,7 @@ database().then(db => {
     });
 
     app.post("/api/admin/delete", (req, res, next) => {
-        auth(req, res, next, true);
+        auth(req, res, next, sessions, true);
     }, async (req, res) => {
         if(!req.body || (req.body && !req.body.filename)) return res.status(400).json({
             success: false,
