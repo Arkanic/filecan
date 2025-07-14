@@ -13,6 +13,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Node.JS
         uses: actions/setup-node@v4.1.0
+        with:
+          node-version: "node"
       - name: Build package
         run: ./ci/createpackage.sh
       - name: Upload Artifact
