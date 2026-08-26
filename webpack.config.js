@@ -15,7 +15,7 @@ module.exports = {
     entry:  "./src/client/index.ts",
     output: {
         filename: "x.[contenthash].js",
-        path: path.resolve(__dirname, "dist")
+        path: path.resolve(__dirname, "build", "dist")
     },
     optimization: {
         splitChunks: {
@@ -24,7 +24,7 @@ module.exports = {
     },
     resolve: {
         extensions: [
-            ".ts", ".tsx",
+            ".ts", ".d.ts", ".tsx",
             ".js",
             ".css"
         ]

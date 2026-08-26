@@ -95,7 +95,7 @@ database().then(db => {
         let session:Session;
         if(req.body.token && typeof(req.body.token) == "string") {
             session = sessions.get(req.body.token);
-            if(!session) return res.json({
+            if(!session) return res.status(400).json({
                 success: false,
                 message: "Invalid token"
             });
@@ -256,7 +256,7 @@ database().then(db => {
         logger.log(`[admin] deleted ${req.body.filename}`);
     });
 
-    if(config.hostStaticFiles) app.get("*", async (req, res) => {
+    if(config.hostStaticFiles) app.get("*splat", async (req, res) => {
         let filename = path.basename(req.path);
 
         if(!fs.existsSync(path.join(config.filecanDataPath, "files/", filename))) {
