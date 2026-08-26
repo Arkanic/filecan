@@ -30,7 +30,7 @@ database().then(db => {
     const sessions = new SessionManager(1000 * 60 * 60 * 24 * 7 * 2); // 2 weeks
 
     const app = express();
-    app.set("trust proxy", true);
+    if(config.reverseProxy) app.set("trust proxy", true);
 
     app.use([
         require("cors")(),
@@ -129,9 +129,11 @@ database().then(db => {
 
             for(let i in files) {
                 let file:Express.Multer.File = (files as unknown as any)[i];
+                const originalName = path.basename(file.originalname);
+                const fileName = path.basename(file.filename);
                 serializedFiles.push({
-                    originalname: file.originalname,
-                    filename: file.filename
+                    originalname: originalName,
+                    filename: fileName
                 });
 
                 let stat = fs.statSync(file.path);
@@ -139,12 +141,12 @@ database().then(db => {
                 await dbc.insert("files", {
                     created: Date.now(),
                     expires: (expiryLength > 0) ? Date.now() + expiryLength : 0, // if negative make it not expire
-                    original_filename: file.originalname,
-                    filename: file.filename,
+                    original_filename: originalName,
+                    filename: fileName,
                     filesize: stat.size,
                     views: 0
                 });
-                fs.copyFileSync(file.path, path.join(config.filecanDataPath, "files/", file.filename));
+                fs.copyFileSync(file.path, path.join(config.filecanDataPath, "files/", fileName));
             }
 
             res.status(201).json({
@@ -257,14 +259,15 @@ database().then(db => {
     });
 
     if(config.hostStaticFiles) app.get("*splat", async (req, res) => {
-        let filename = path.basename(req.path);
+        const filename = path.basename(req.path);
+        const filePath = path.join(config.filecanDataPath, "files/", filename);
 
-        if(!fs.existsSync(path.join(config.filecanDataPath, "files/", filename))) {
+        if(!fs.existsSync(filePath)) {
             res.status(404).send("not found");
             logger.log(`[serve] 404 ${getIP(req)} ${filename}`);
             return;
         }
-        res.status(200).sendFile(path.join(__dirname, "../../", config.filecanDataPath, "files/", filename));
+        res.status(200).sendFile(filePath);
         logger.log(`[serve] 200 ${getIP(req)} ${filename}`)
 
         await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);

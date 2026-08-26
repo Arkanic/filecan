@@ -27,7 +27,7 @@ export function makeAPICall<T extends WebSuccess>(path:string, authneeded:boolea
         let tokenData;
         if(authneeded) tokenData = getToken();
         if(!tokenData && authneeded) reject();
-        let token;
+        let token = "";
         if(authneeded) token = tokenData!.token;
 
         let xhr = customXHR ? customXHR : new XMLHttpRequest();
