@@ -260,7 +260,7 @@ database().then(db => {
 
     if(config.hostStaticFiles) app.get("*splat", async (req, res) => {
         const filename = path.basename(req.path);
-        const filePath = path.join(config.filecanDataPath, "files/", filename);
+        const filePath = path.resolve(config.filecanDataPath, "files/", filename);
 
         if(!fs.existsSync(filePath)) {
             res.status(404).send("not found");
