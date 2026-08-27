@@ -169,12 +169,12 @@ export function setupUI() {
                 itemdiv.appendChild(canvas);
 
                 let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xf0be));
-                copySpanIcon.replaceWith(newQrSpanIcon); // check_circle
-                copySpanIcon = newQrSpanIcon;
+                qrSpanIcon.replaceWith(newQrSpanIcon); // check_circle
+                qrSpanIcon = newQrSpanIcon;
                 setTimeout(() => {
                     let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
-                    copySpanIcon.replaceWith(newQrSpanIcon); // check_circle
-                    copySpanIcon = newQrSpanIcon;
+                    qrSpanIcon.replaceWith(newQrSpanIcon); // check_circle
+                    qrSpanIcon = newQrSpanIcon;
                 }, 500);
             });
 
