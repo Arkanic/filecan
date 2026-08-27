@@ -3,6 +3,12 @@
     overflow-wrap: normal;
 }
 
+body {
+    background-color: Canvas;
+    color: CanvasText;
+    color-scheme: light dark;
+}
+
 h1.title {
     justify-self: center;
     font-size: 64px;
@@ -16,14 +22,14 @@ h1.title {
 .content {
     margin: auto;
     width: max(50%, 600px);
-    border: 3px solid black;
+    border: 3px solid CanvasText;
     padding: 5px;
 }
 
 .paragraph {
     box-sizing: border-box;
     width: 100%;
-    background-color: rgba(230, 230, 230, 1);
+    background-color: color-mix(in srgb, Canvas, CanvasText 10%);
     padding-left: 10px;
     padding-right: 10px;
 
@@ -37,7 +43,7 @@ h1.title {
 }
 
 .border {
-    border: 1px solid black;
+    border: 1px solid CanvasText;
 }
 
 input.big {
@@ -50,12 +56,12 @@ input.angry {
 }
 
 div.item-box {
-    background-color: rgba(250, 250, 250, 1);
+    background-color: color-mix(in srgb, Canvas, CanvasText 4%);
     padding-left: 5px;
 }
 
 div.item-box:nth-child(odd) {
-    background-color: rgba(230, 230, 230, 1);
+    background-color: color-mix(in srgb, Canvas, CanvasText 10%);
 }
 
 div.item-box p {
