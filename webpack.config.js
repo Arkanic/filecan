@@ -2,7 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 
 module.exports = {
@@ -54,7 +53,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "src/client/html/index.html"
-        }),
-        new CleanWebpackPlugin()
+        })
     ]
 };
