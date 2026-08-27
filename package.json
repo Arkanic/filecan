@@ -5,8 +5,8 @@
   "main": "src/server/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-build": "webpack --mode production --config webpack.config.js --progress && cp -r public/* build/dist/",
-    "client-build-dev": "webpack --mode development --config webpack.config.js --progress && cp -r public/* build/dist/",
+    "client-build": "webpack --mode production --config webpack.config.js --progress",
+    "client-build-dev": "webpack --mode development --config webpack.config.js --progress",
     "server-build": "tsc -p tsconfig.json",
     "server-build-dev": "tsc -p tsconfig.dev.json",
     "build": "npm run clean && npm run server-build && npm run client-build",
@@ -45,6 +45,7 @@
     "express": "^5.2.1",
     "knex": "^3.3.0",
     "multer": "^2.2.0",
+    "qr-creator": "^1.0.0",
     "yaml": "^2.9.0"
   },
   "allowScripts": {

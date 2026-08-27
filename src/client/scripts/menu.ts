@@ -1,3 +1,4 @@
+import QrCreator from "qr-creator";
 import {config, makeAPICall, authenticateUpgradeToken, tokenUsefulForAction} from "./networking";
 import Permission from "../../shared/types/permission";
 import elements from "./elements";
@@ -121,9 +122,10 @@ export function setupUI() {
             linkElement.href = link;
             linkElement.appendChild(document.createTextNode(link));
 
+
+            // todo refactor this mess, potentially lead into some kind of budget react
             let copySpan = document.createElement("span");
-            copySpan.classList.add("material-symbols-outlined");
-            copySpan.classList.add("icon-clickable");
+            copySpan.classList.add("material-symbols-outlined", "icon-clickable");
             copySpan.title = "Copy";
             let copySpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
             copySpan.appendChild(copySpanIcon);
@@ -140,8 +142,45 @@ export function setupUI() {
                 });
             });
 
+            let qrSpan = document.createElement("span");
+            qrSpan.classList.add("material-symbols-outlined", "icon-clickable");
+            qrSpan.title = "Create QR code";
+            let qrSpanIcon = document.createTextNode(String.fromCodePoint(0xe00a)); // qr_code
+            qrSpan.appendChild(qrSpanIcon);
+            let qrGenerated = false;
+            qrSpan.addEventListener("click", (e) => {
+                if(qrGenerated) return;
+                qrGenerated = true; // stop duplicate qr codes
+
+                let canvas = document.createElement("canvas");
+                canvas.classList.add("qrcode");
+                canvas.width = 256;
+                canvas.height = 256;
+                QrCreator.render({
+                    text: link,
+                    radius: 0.0,
+                    ecLevel: "H",
+                    fill: "#000",
+                    background: "#fff",
+                    size: 256
+                }, canvas);
+
+                itemdiv.appendChild(document.createElement("br"));
+                itemdiv.appendChild(canvas);
+
+                let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xf0be));
+                copySpanIcon.replaceWith(newQrSpanIcon); // check_circle
+                copySpanIcon = newQrSpanIcon;
+                setTimeout(() => {
+                    let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
+                    copySpanIcon.replaceWith(newQrSpanIcon); // check_circle
+                    copySpanIcon = newQrSpanIcon;
+                }, 500);
+            });
+
             filename.appendChild(linkElement);
             filename.appendChild(copySpan);
+            filename.appendChild(qrSpan);
             itemdiv.appendChild(filename);
             resultsdiv.appendChild(itemdiv);
         }
