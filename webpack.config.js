@@ -13,7 +13,8 @@ module.exports = (env, argv) => {
         entry:  "./src/client/index.ts",
         output: {
             filename: "x.[contenthash].js",
-            path: path.resolve(__dirname, "build", "dist")
+            path: path.resolve(__dirname, "build", "dist"),
+            assetModuleFilename: "x.[contenthash][ext]"
         },
         optimization: {
             splitChunks: {
@@ -42,6 +43,14 @@ module.exports = (env, argv) => {
                         },
                         "css-loader"
                     ]
+                },
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                    type: "asset/resource"
+                },
+                {
+                    test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                    type: "asset/resource"
                 }
             ]
         },
@@ -51,7 +60,7 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 filename: "index.html",
-                template: "src/client/html/index.html"
+                template: "src/client/content/index.html"
             })
         ]
     };
