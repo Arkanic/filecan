@@ -1,4 +1,5 @@
-import {config, makeAPICall, authenticateUpgradeToken} from "./networking";
+import {config, makeAPICall, authenticateUpgradeToken, tokenUsefulForAction} from "./networking";
+import Permission from "../../shared/types/permission";
 import elements from "./elements";
 import timeAgo from "./util/timeago";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
@@ -15,13 +16,15 @@ export function stopLoading() {
 let logsLastUpdate = 0;
 let adminOpen = false;
 export function setupUI() {
-    if (!config.requirePassword) {
+    if (!config.requirePassword || tokenUsefulForAction(Permission.Upload)) {
         elements.passwordbox.classList.add("hidden");
     }
 
     elements.adminsubmit.addEventListener("click", async () => {
-        let result = await authenticateUpgradeToken(elements.adminpassword.value, true);
-        if(!result) {
+        let auth = false;
+        if(tokenUsefulForAction(Permission.Admin)) auth = true;
+        else auth = await authenticateUpgradeToken(elements.adminpassword.value, true);
+        if(!auth) {
             elements.adminpassword.classList.add("angry");
             setTimeout(() => {
                 elements.adminpassword.classList.remove("angry");
@@ -53,12 +56,15 @@ export function setupUI() {
 
     elements.admintoggle.addEventListener("click", () => {
         if(!adminOpen) {
+            elements.admintoggle.innerText = "Return";
+
+            // skip login box if we already think we have a token
+            if(tokenUsefulForAction(Permission.Admin)) elements.adminsubmit.click();
+
             elements.title.innerText = "Admin";
             elements.content.classList.add("hidden");
             elements.results.classList.add("hidden");
             elements.adminlogin.classList.remove("hidden");
-
-            elements.admintoggle.innerText = "Return";
         } else {
             window.location.reload();
         }
@@ -71,7 +77,9 @@ export function setupUI() {
     });
 
     elements.submitbutton.addEventListener("click", async () => {
-        let auth = await authenticateUpgradeToken(elements.password.value, false);
+        let auth = false;
+        if(tokenUsefulForAction(Permission.Upload)) auth = true; // if we already have a token, let use it!
+        else auth = await authenticateUpgradeToken(elements.password.value, false);
         if(!auth) {
             elements.loading.classList.add("hidden");
             elements.content.classList.remove("hidden");
@@ -121,12 +129,12 @@ export function setupUI() {
         elements.results.appendChild(resultsdiv);
     });
 
-    let intervalID;
+    let intervalID:NodeJS.Timeout;
     let last = 0;
     let now = 0;
     let dif:number;
 
-    function loadStart(e:Event):void {
+    function loadStart(e:any):void {
         console.log("loadStart");
         elements.progressbox.classList.remove("hidden");
         intervalID = setInterval(() => {
@@ -135,7 +143,7 @@ export function setupUI() {
         }, 1000);
     }
 
-    function progress(e):void {
+    function progress(e:any):void {
         console.log("progress");
         now = e.loaded;
         let progress = e.loaded / e.total * 100;
@@ -149,7 +157,7 @@ export function setupUI() {
         `;
     }
 
-    function load(e):void {
+    function load(e:any):void {
         console.log("load");
         clearInterval(intervalID);
         elements.progressbox.classList.add("hidden");

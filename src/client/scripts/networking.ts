@@ -54,6 +54,16 @@ export interface GetTokenResult {
 }
 
 /**
+ * Clear token from local storage entirely
+ */
+export function clearToken():void {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
+    localStorage.removeItem("tokenPermissions");
+    localStorage.removeItem("tokenForInstanceHash");
+}
+
+/**
  * Get token and permissions from localstorage
  * 
  * @returns undefined if the token does not exist, or if the token is expired
@@ -63,21 +73,13 @@ export function getToken():GetTokenResult | undefined {
     if(!token) return;
 
     if(localStorage.getItem("tokenForInstanceHash") != config.instanceHash) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenExpiry");
-        localStorage.removeItem("tokenPermissions");
-        localStorage.removeItem("tokenForInstanceHash");
-
+        clearToken();
         return;
     }
     
     let expiry = parseInt(localStorage.getItem("tokenExpiry")!);
     if(expiry < Date.now()) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("tokenExpiry");
-        localStorage.removeItem("tokenPermissions");
-        localStorage.removeItem("tokenForInstanceHash");
-
+        clearToken();
         return;
     }
 
@@ -87,6 +89,16 @@ export function getToken():GetTokenResult | undefined {
         token,
         permissions
     }
+}
+
+/**
+ * Sufficient permissions to do this action with our given token?
+ * @param permission permission or set
+ */
+export function tokenUsefulForAction(permission:PermissionSet | number):boolean {
+    const token = getToken();
+    if(!token) return false;
+    return (token.permissions & permission) != 0;
 }
 
 /**
@@ -112,10 +124,7 @@ export function authenticateUpgradeToken(password:string, admin:boolean):Promise
 
             let response = JSON.parse(xhr.responseText) as WebResponse<WebAuthSuccess>;
             if(!response.success) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("tokenExpiry");
-                localStorage.removeItem("tokenPermissions");
-                localStorage.removeItem("tokenForInstanceHash");
+                clearToken();
                 return resolve(false);
             }
 
