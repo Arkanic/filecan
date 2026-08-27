@@ -94,3 +94,9 @@ div.logbox p {
     padding-right: 5px;
     color: white;
 }
+
+.icon-clickable {
+    color: color-mix(in srgb, CanvasText, Canvas 5%);
+    cursor: pointer;
+    margin-left: 5px;
+}

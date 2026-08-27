@@ -10,7 +10,7 @@ let args = process.argv.slice(2);
 const codepoints = path.resolve(args[0] + ".codepoints");
 const font = path.resolve(args[0] + ".woff2");
 const out = path.resolve(args[2]);
-const wantedCodepoints = fs.readFileSync(path.resolve(args[1])).toString().split("\n");
+const wantedCodepoints = fs.readFileSync(path.resolve(args[1])).toString().split("\n").map(x => x.split(" ")[0]);
 const allCodepoints = Object.fromEntries(fs.readFileSync(codepoints).toString().split("\n").map(x => x.split(" ")));
 
 let outputCharacters = "";

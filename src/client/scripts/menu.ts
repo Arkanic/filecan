@@ -121,7 +121,27 @@ export function setupUI() {
             linkElement.href = link;
             linkElement.appendChild(document.createTextNode(link));
 
+            let copySpan = document.createElement("span");
+            copySpan.classList.add("material-symbols-outlined");
+            copySpan.classList.add("icon-clickable");
+            copySpan.title = "Copy";
+            let copySpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
+            copySpan.appendChild(copySpanIcon);
+            copySpan.addEventListener("click", (e) => {
+                navigator.clipboard.writeText(link).then(() => {
+                    let newCopySpanIcon = document.createTextNode(String.fromCodePoint(0xf0be));
+                    copySpanIcon.replaceWith(newCopySpanIcon); // check_circle
+                    copySpanIcon = newCopySpanIcon;
+                    setTimeout(() => {
+                        let newCopySpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
+                        copySpanIcon.replaceWith(newCopySpanIcon); // check_circle
+                        copySpanIcon = newCopySpanIcon;
+                    }, 500);
+                });
+            });
+
             filename.appendChild(linkElement);
+            filename.appendChild(copySpan);
             itemdiv.appendChild(filename);
             resultsdiv.appendChild(itemdiv);
         }

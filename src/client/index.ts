@@ -3,7 +3,7 @@ import {stopLoading, setupUI} from "./scripts/menu";
 
 import "./css/css";
 import "./css/global.css"
-import "./font/icons.css"
+import "./css/icons.css"
 
 Promise.all([
     getConfig

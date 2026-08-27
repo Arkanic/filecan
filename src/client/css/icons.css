@@ -2,7 +2,7 @@
     font-family: "Material Symbols Outlined";
     font-style: normal;
     font-weight: 400;
-    src: url("./icons.woff2") format("woff2"); /* come back to here */
+    src: url("../font/icons.woff2") format("woff2");
 }
 
 .material-symbols-outlined {
@@ -20,4 +20,7 @@
   -webkit-font-feature-settings: "liga";
   font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
 }
+
+/* node tools/subsetfont.js "src/client/font/source/MaterialSymbolsOutlined" src/client/font/icons.codepoints src/client/font/icons.woff2 */
