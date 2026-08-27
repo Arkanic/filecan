@@ -1,40 +1,43 @@
 import * as express from "express";
-import bcrypt from "bcrypt";
+import SessionManager from "../session";
+import {hasPermission} from "../permissions";
+import Permission from "../../shared/types/permission";
 import Logger from "../log";
 import {getIP} from "../ip";
-import config from "../config";
 
-export default function auth(req:express.Request, res:express.Response, next:express.NextFunction, admin:boolean) {
+export default function auth(req:express.Request, res:express.Response, next:express.NextFunction, sessions:SessionManager, admin:boolean) {
     let logger = new Logger(res.locals.db, "auth");
 
-    if(!config.requirePassword && !admin) return next();
-    let password = req.headers.password;
-    if(!password) {
-        res.status(400).json({
-            success: false,
-            message: "Password is missing"
-        });
-        logger.warn(`[auth fail] [missing] ${getIP(req)} attempted access, password missing`);
-    } else if(typeof password === "object") {
-        res.status(400).json({
-            success: false,
-            message: "Send password once only"
-        });
+    if(!(req.headers.token && typeof(req.headers.token) == "string")) {
         logger.warn(`[auth fail] [malformed] ${getIP(req)} attempted access, malformed request`);
-    } else {
-        let adminPasswordh:string, passwordh:string;
-        adminPasswordh = config.adminPassword;
-        passwordh = config.password;
-        bcrypt.compare(password, admin ? adminPasswordh : passwordh, (err, matches) => {
-            if(err) throw err;
-            if(matches) next();
-            else {
-                res.status(401).json({
-                    success: false,
-                    message: "Incorrect password"
-                });
-                logger.warn(`[auth fail] [fail] ${getIP(req)} attempted access, incorrect password`);
-            }
+        return res.status(400).json({
+            success: false,
+            message: "Malformed request"
         });
     }
+
+    let token = req.headers.token;
+    let session = sessions.get(token);
+    if(!session) {
+        logger.warn(`[auth fail] [malformed] ${getIP(req)} attempted access, malformed request`);
+        return res.status(400).json({
+            success: false,
+            message: "Invalid token"
+        });
+    }
+    session.interactionObserved();
+
+    const permissions = session.permissions;
+    if(admin) {
+        if(hasPermission(permissions, Permission.Admin)) return next();
+    } else {
+        if(hasPermission(permissions, Permission.Upload)) return next();
+    }
+
+    // insufficient permissions
+    logger.warn(`[auth fail] [permission] ${getIP(req)} attempted access, insufficient permissions for ${admin ? "admin" : "upload"}`);
+    return res.status(400).json({
+        success: false,
+        message: "Insufficient permissions"
+    });
 }

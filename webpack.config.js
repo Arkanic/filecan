@@ -2,7 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 
 module.exports = {
@@ -15,7 +14,7 @@ module.exports = {
     entry:  "./src/client/index.ts",
     output: {
         filename: "x.[contenthash].js",
-        path: path.resolve(__dirname, "dist")
+        path: path.resolve(__dirname, "build", "dist")
     },
     optimization: {
         splitChunks: {
@@ -24,7 +23,7 @@ module.exports = {
     },
     resolve: {
         extensions: [
-            ".ts", ".tsx",
+            ".ts", ".d.ts", ".tsx",
             ".js",
             ".css"
         ]
@@ -54,7 +53,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "src/client/html/index.html"
-        }),
-        new CleanWebpackPlugin()
+        })
     ]
 };

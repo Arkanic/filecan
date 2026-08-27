@@ -54,3 +54,7 @@ let colors:{[unit:string]:string} = {
 export function displayMessage(author:string, color:string, content:string) {
     console.log(`[${author}] ${colors[color]}${content}${colors["reset"]}`);
 }
+
+export async function deleteLogs(db:Knex, minTime:number) {
+    await db("log").delete().where("time", ">", minTime);
+}

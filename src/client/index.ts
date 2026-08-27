@@ -1,6 +1,7 @@
 import {getConfig, config} from "./scripts/networking";
 import {stopLoading, setupUI} from "./scripts/menu";
 
+import "./css/css";
 import "./css/global.css"
 
 Promise.all([

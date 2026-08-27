@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "target": "es2021",
+        "target": "es2025",
         "module": "commonjs",
         "allowJs": true,
         "resolveJsonModule": true,
         "sourceMap": false,
         "outDir": "./build",
+        "rootDir": "./src",
         "strict": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
@@ -20,6 +21,6 @@
         "./src/client"
     ],
     "include": [
-        "./src/server"
+        "./src/"
     ]
 }

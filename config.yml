@@ -27,7 +27,7 @@ maxFilesizeMegabytes: 100
 filecanDataPath: ./data
 
 # Path that static web files are located for hosting
-staticFilesPath: ./dist
+staticFilesPath: ./build/dist
 
 # Should filecan host uploaded files? Can be set to false if you plan on using something like nginx
 # to host the static files found in data/files. in a location other than where the client is served.
