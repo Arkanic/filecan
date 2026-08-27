@@ -5,7 +5,7 @@ import {Version, parseVersion, compareVersions} from "../versions";
 const baseMigrationPath = path.join(__dirname, "./migrations");
 
 export function getMigrations(version:string):Array<string> {
-    const migrationFiles = fs.readdirSync(baseMigrationPath);
+    const migrationFiles = fs.readdirSync(baseMigrationPath).filter(v => v.match(/^\d+.\d+.\d+.js$/));
     return migrationFiles.map(m => m.replace(".js", "")).filter(m => compareVersions(m, version)).sort((a, b) => compareVersions(a, b) ? 1 : -1);
 }
 

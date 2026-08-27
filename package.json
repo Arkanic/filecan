@@ -5,9 +5,12 @@
   "main": "src/server/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-build": "webpack --config webpack.config.js --progress && cp -r public/* build/dist/",
-    "server-build": "tsc",
-    "build": "npm run server-build && npm run client-build",
+    "client-build": "webpack --mode production --config webpack.config.js --progress && cp -r public/* build/dist/",
+    "client-build-dev": "webpack --mode development --config webpack.config.js --progress && cp -r public/* build/dist/",
+    "server-build": "tsc -p tsconfig.json",
+    "server-build-dev": "tsc -p tsconfig.dev.json",
+    "build": "npm run clean && npm run server-build && npm run client-build",
+    "build-dev": "npm run clean && npm run server-build-dev && npm run client-build-dev",
     "start": "node ./build/server/index.js",
     "quick": "npm run build && npm run start",
     "clean": "rm -rf ./build"

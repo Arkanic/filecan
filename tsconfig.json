@@ -10,6 +10,7 @@
         "strict": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
+        "removeComments": true,
         "forceConsistentCasingInFileNames": true,
         "typeRoots": [
             "node_modules/@types"

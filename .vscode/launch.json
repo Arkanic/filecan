@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Web",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/build/dist/",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///*": "*",
+                "webpack:///src/*": "${workspaceFolder}/src/*"
+            }
+        },
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Filecan",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/server/index.js",
+            "preLaunchTask": "npm: build-dev",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ]
+        }
+    ]
+}
