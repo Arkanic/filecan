@@ -1,11 +1,12 @@
 import Element from "./element";
+import Icons from "../../font/icons";
 
 export default class IconButton extends Element {
-    private icon:number;
-    private clickedIcon:number;
+    private icon:string;
+    private clickedIcon:string;
     private title?:string;
 
-    constructor(icon:number, title?:string, clickedIcon:number = 0xf0be)  {
+    constructor(icon:string, title?:string, clickedIcon:string = Icons.check_circle)  {
         super();
 
         this.icon = icon;
@@ -17,11 +18,11 @@ export default class IconButton extends Element {
         let iconSpan = document.createElement("span");
         iconSpan.classList.add("material-symbols-outlined", "icon-clickable");
         if(this.title) iconSpan.title = this.title;
-        let defaultIcon = document.createTextNode(String.fromCodePoint(this.icon));
+        let defaultIcon = document.createTextNode(this.icon);
         iconSpan.appendChild(defaultIcon);
         
         iconSpan.addEventListener("click", () => {
-            let newIcon = document.createTextNode(String.fromCharCode(this.clickedIcon));
+            let newIcon = document.createTextNode(this.clickedIcon);
             defaultIcon.replaceWith(newIcon);
             setTimeout(() => {
                 newIcon.replaceWith(defaultIcon);

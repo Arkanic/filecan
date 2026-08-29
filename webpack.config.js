@@ -60,7 +60,8 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 filename: "index.html",
-                template: "src/client/content/index.html"
+                template: "src/client/content/index.html",
+                icons: require("./src/client/font/icons")
             })
         ]
     };

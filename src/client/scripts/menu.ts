@@ -7,7 +7,9 @@ import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
 import WebUpload, {WebUploadSuccess} from "../../shared/types/webupload";
 import {WebSuccess} from "../../shared/types/webresponse";
+import Icons from "../font/icons";
 import IconButton from "./elements/iconbutton";
+import Icon from "./elements/icon";
 
 
 export function stopLoading() {
@@ -123,16 +125,14 @@ export function setupUI() {
             linkElement.href = link;
             linkElement.appendChild(document.createTextNode(link));
 
-
-            const copySpan = new IconButton(0xe14d, "Copy"); // icon content_copy
+            const copySpan = new IconButton(Icons.content_copy, "Copy");
             const copySpanElem = copySpan.get();
             copySpanElem.addEventListener("click", () => {
                 navigator.clipboard.writeText(link);
             });
 
-            const qrSpan = new IconButton(0xe00a, "Create QR code"); // icon qr_code
+            const qrSpan = new IconButton(Icons.qr_code_2, "Create QR code");
             const qrSpanElem = qrSpan.get(); 
-            
             let qrCodeGenerated = false;
             qrSpanElem.addEventListener("click", () => {
                 if(qrCodeGenerated) return;
@@ -223,7 +223,9 @@ async function getUploadedFiles() {
 
         let deleteButton = document.createElement("a");
         deleteButton.href = "#1";
-        deleteButton.appendChild(document.createTextNode("🗑"));
+        const deleteIcon = new Icon(Icons.delete).get();
+        deleteIcon.classList.add("icon-inline");
+        deleteButton.appendChild(deleteIcon);
         deleteButton.addEventListener("click", async () => {
             if(deleteButton.href.endsWith("#1")) { // first click
                 deleteButton.href = "#";
