@@ -7,6 +7,7 @@ import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
 import WebUpload, {WebUploadSuccess} from "../../shared/types/webupload";
 import {WebSuccess} from "../../shared/types/webresponse";
+import IconButton from "./elements/iconbutton";
 
 
 export function stopLoading() {
@@ -123,34 +124,19 @@ export function setupUI() {
             linkElement.appendChild(document.createTextNode(link));
 
 
-            // todo refactor this mess, potentially lead into some kind of budget react
-            let copySpan = document.createElement("span");
-            copySpan.classList.add("material-symbols-outlined", "icon-clickable");
-            copySpan.title = "Copy";
-            let copySpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
-            copySpan.appendChild(copySpanIcon);
-            copySpan.addEventListener("click", (e) => {
-                navigator.clipboard.writeText(link).then(() => {
-                    let newCopySpanIcon = document.createTextNode(String.fromCodePoint(0xf0be));
-                    copySpanIcon.replaceWith(newCopySpanIcon); // check_circle
-                    copySpanIcon = newCopySpanIcon;
-                    setTimeout(() => {
-                        let newCopySpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
-                        copySpanIcon.replaceWith(newCopySpanIcon); // check_circle
-                        copySpanIcon = newCopySpanIcon;
-                    }, 500);
-                });
+            const copySpan = new IconButton(0xe14d, "Copy"); // icon content_copy
+            const copySpanElem = copySpan.get();
+            copySpanElem.addEventListener("click", () => {
+                navigator.clipboard.writeText(link);
             });
 
-            let qrSpan = document.createElement("span");
-            qrSpan.classList.add("material-symbols-outlined", "icon-clickable");
-            qrSpan.title = "Create QR code";
-            let qrSpanIcon = document.createTextNode(String.fromCodePoint(0xe00a)); // qr_code
-            qrSpan.appendChild(qrSpanIcon);
-            let qrGenerated = false;
-            qrSpan.addEventListener("click", (e) => {
-                if(qrGenerated) return;
-                qrGenerated = true; // stop duplicate qr codes
+            const qrSpan = new IconButton(0xe00a, "Create QR code"); // icon qr_code
+            const qrSpanElem = qrSpan.get(); 
+            
+            let qrCodeGenerated = false;
+            qrSpanElem.addEventListener("click", () => {
+                if(qrCodeGenerated) return;
+                qrCodeGenerated = true;
 
                 let canvas = document.createElement("canvas");
                 canvas.classList.add("qrcode");
@@ -167,20 +153,11 @@ export function setupUI() {
 
                 itemdiv.appendChild(document.createElement("br"));
                 itemdiv.appendChild(canvas);
-
-                let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xf0be));
-                qrSpanIcon.replaceWith(newQrSpanIcon); // check_circle
-                qrSpanIcon = newQrSpanIcon;
-                setTimeout(() => {
-                    let newQrSpanIcon = document.createTextNode(String.fromCodePoint(0xe14d)); // content_copy
-                    qrSpanIcon.replaceWith(newQrSpanIcon); // check_circle
-                    qrSpanIcon = newQrSpanIcon;
-                }, 500);
             });
 
             filename.appendChild(linkElement);
-            filename.appendChild(copySpan);
-            filename.appendChild(qrSpan);
+            filename.appendChild(copySpan.get());
+            filename.appendChild(qrSpan.get());
             itemdiv.appendChild(filename);
             resultsdiv.appendChild(itemdiv);
         }
@@ -188,7 +165,7 @@ export function setupUI() {
         elements.results.appendChild(resultsdiv);
     });
 
-    let intervalID:NodeJS.Timeout;
+    let intervalID:any;
     let last = 0;
     let now = 0;
     let dif:number;

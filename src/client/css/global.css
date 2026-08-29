@@ -21,7 +21,7 @@ h1.title {
 
 .content {
     margin: auto;
-    width: max(50%, 600px);
+    width: max(50%, 400px);
     border: 3px solid CanvasText;
     padding: 5px;
 }
@@ -99,6 +99,7 @@ div.logbox p {
     color: color-mix(in srgb, CanvasText, Canvas 5%);
     cursor: pointer;
     margin-left: 5px;
+    user-select: none;
 }
 
 .qrcode {
