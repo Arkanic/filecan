@@ -2,7 +2,7 @@ import QrCreator from "qr-creator";
 import {config, makeAPICall, authenticateUpgradeToken, tokenUsefulForAction} from "./networking";
 import Permission from "../../shared/types/permission";
 import elements from "./elements";
-import timeAgo from "./util/timeago";
+import timeAgo, {scaleUnit, DataUnitRanges} from "./util/timeago";
 import {WebLogsSuccess} from "../../shared/types/weblogs";
 import {WebFileSuccess} from "../../shared/types/webfiles";
 import WebUpload, {WebUploadSuccess} from "../../shared/types/webupload";
@@ -180,21 +180,19 @@ export function setupUI() {
     }
 
     function progress(e:any):void {
-        console.log("progress");
         now = e.loaded;
         let progress = e.loaded / e.total * 100;
         elements.progressbar.value = progress;
 
         elements.progressinfo.innerHTML = `
         %${progress.toFixed(2)}
-        ${(e.loaded / 1024 / 1024).toFixed(2)}mb/${(e.total / 1024 / 1024).toFixed(2)}mb
-        ${(dif / 1024 / 1024).toFixed(2)}mb/s
+        ${scaleUnit(e.loaded, DataUnitRanges)}/${scaleUnit(e.total, DataUnitRanges)}
+        ${scaleUnit(dif, DataUnitRanges)}/s
         ETA ${((e.total - e.loaded) / dif).toFixed(2)}s
         `;
     }
 
     function load(e:any):void {
-        console.log("load");
         clearInterval(intervalID);
         elements.progressbox.classList.add("hidden");
         elements.content.classList.add("hidden");
