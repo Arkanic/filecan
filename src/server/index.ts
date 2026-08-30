@@ -270,7 +270,12 @@ database().then(db => {
         res.status(200).sendFile(filePath);
         logger.log(`[serve] 200 ${getIP(req)} ${filename}`)
 
-        await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
+        // looks odd, but range requests indicate partial downloads for things like video
+        // so if we only record the initial stat (won't contain range header), video views
+        // will only count once instead of 4-10 times
+        if(!req.headers.range) {
+            await dbc.db.table("files").update({views: dbc.db.raw("?? + ?", ["views", 1])}).where("filename", filename);
+        }
     });
 
     app.listen(config.port, () => logger.log("Listener online"));
